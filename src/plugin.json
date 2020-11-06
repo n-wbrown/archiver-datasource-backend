@@ -4,6 +4,7 @@
   "id": "slac-national-accelerator-laboratory-archiver-datasource-backend",
   "metrics": true,
   "backend": true,
+  "alerting": true,
   "executable": "gpx_archiver-datasource-backend",
   "info": {
     "description": "Backend plugin to connect Grafana to the EPICS Archiver Appliance",
