@@ -1,0 +1,26 @@
+{
+  "name": "slac-national-accelerator-laboratory-archiver-datasource-backend",
+  "version": "1.0.0",
+  "description": "Backend plugin to connect Grafana to the EPICS Archiver Appliance",
+  "scripts": {
+    "build": "grafana-toolkit plugin:build",
+    "test": "grafana-toolkit plugin:test",
+    "dev": "grafana-toolkit plugin:dev",
+    "watch": "grafana-toolkit plugin:dev --watch"
+  },
+  "author": "n-wbrown",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "@grafana/data": "latest",
+    "@grafana/toolkit": "latest",
+    "@grafana/runtime": "latest",
+    "@grafana/ui": "latest",
+    "@types/lodash": "latest"
+  },
+  "engines": {
+    "node": ">=12 <13"
+  },
+  "resolutions": {
+    "rxjs": "6.6.3"
+  }
+}
