@@ -55,10 +55,6 @@ func (td ArchiverDatasource) CheckHealth(ctx context.Context, req *backend.Check
     }, nil
 }
 
-
-
-
-
 type archiverInstanceSettings struct {
 	httpClient *http.Client
 }
