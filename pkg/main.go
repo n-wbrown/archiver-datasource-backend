@@ -12,7 +12,7 @@ func main() {
 	// it wont finish until Grafana shutsdown the process or the plugin choose
 	// to exit close down by itself
     // log.DefaultLogger.Info("****TESTING LOGMESSAGE*****")
-	err := datasource.Serve(newDatasource())
+	err := datasource.Serve(newArchiverDataSource())
 
 	// Log any error if we could start the plugin.
 	if err != nil {

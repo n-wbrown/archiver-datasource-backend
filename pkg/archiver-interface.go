@@ -11,12 +11,13 @@ import (
 	"github.com/grafana/grafana-plugin-sdk-go/backend"
 	"github.com/grafana/grafana-plugin-sdk-go/backend/datasource"
 	"github.com/grafana/grafana-plugin-sdk-go/backend/instancemgmt"
-	// "github.com/grafana/grafana-plugin-sdk-go/backend/log"
+	"github.com/grafana/grafana-plugin-sdk-go/backend/log"
 	//"github.com/grafana/grafana-plugin-sdk-go/data"
 )
 
 func newArchiverDataSource() datasource.ServeOpts {
     // Create a new instance manager
+    log.DefaultLogger.Debug("Starting newArchiverDataSource")
 
     im := datasource.NewInstanceManager(newArchiverDataSourceInstance)
     ds := &ArchiverDatasource{
@@ -36,11 +37,15 @@ type ArchiverDatasource struct {
 
 func (td *ArchiverDatasource) QueryData(ctx context.Context, req *backend.QueryDataRequest) (*backend.QueryDataResponse, error) {
     // Structure defined by grafana-plugin-sdk-go. QueryData should unpack the req argument into individual queries.
-
+    log.DefaultLogger.Debug("Starting QueryData of newArchiverDataSource")
+    log.DefaultLogger.Debug("QueryData", "request", req)
     // create response struct
     response := backend.NewQueryDataResponse()
-
     // IMPLEMENT HERE
+    for idx, q := range req.Queries {
+        log.DefaultLogger.Debug("index:", idx)
+        log.DefaultLogger.Debug("query:", q)
+    }
 
     return response, nil
 }
