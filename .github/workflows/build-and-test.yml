@@ -8,6 +8,4 @@ jobs:
       - uses: actions/setup-node@v1
       - uses: actions/setup-go@v2
       - run: git clone https://github.com/magefile/mage
-      - run: pushd mage
-      - run: go run bootstrap.go
-      - run: popd
+      - run: pushd mage; go run bootstrap.go; 
