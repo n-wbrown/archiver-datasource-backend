@@ -8,4 +8,6 @@ jobs:
       - uses: actions/setup-node@v1
       - uses: actions/setup-go@v2
       - uses: magefile/mage-action@v1
-      - run: mage -v buildAll
+      - name: Build Go pkg
+        run: |
+          mage -v buildAll
