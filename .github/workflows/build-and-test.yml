@@ -4,7 +4,7 @@ jobs:
   build-and-test-plugin:
     runs-on: ubuntu-latest
     steps:
-      - uses: Checkout Github repository
+      - name: Checkout Github repository
         uses: actions/checkout@v2
       - name: Setup NodeJS environment
         uses: actions/setup-node@v1
