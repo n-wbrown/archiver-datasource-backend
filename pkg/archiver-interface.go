@@ -45,12 +45,18 @@ func (td *ArchiverDatasource) QueryData(ctx context.Context, req *backend.QueryD
     for idx, q := range req.Queries {
         log.DefaultLogger.Debug("index:", idx)
         log.DefaultLogger.Debug("query:", q)
+
+        res := td.query(ctx, q)
+
+        // save the response in a hashmap
+        // based on with RefID as identifier
+        response.Responses[q.RefID] = res
     }
 
     return response, nil
 }
 
-func (td ArchiverDatasource) CheckHealth(ctx context.Context, req *backend.CheckHealthRequest) (*backend.CheckHealthResult, error) {
+func (td *ArchiverDatasource) CheckHealth(ctx context.Context, req *backend.CheckHealthRequest) (*backend.CheckHealthResult, error) {
     var status = backend.HealthStatusOk
     var message = "This is a fake success message"
 
@@ -59,6 +65,13 @@ func (td ArchiverDatasource) CheckHealth(ctx context.Context, req *backend.Check
         Message:    message,
     }, nil
 }
+
+func (td *ArchiverDatasource) query(ctx context.Context, query backend.DataQuery) backend.DataResponse {
+    log.DefaultLogger.Debug("Executing Query")
+    response := backend.DataResponse{}
+    return response
+}
+
 
 type archiverInstanceSettings struct {
 	httpClient *http.Client
