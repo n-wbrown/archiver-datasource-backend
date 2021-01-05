@@ -20,5 +20,7 @@ jobs:
       - name: Install Frontend Tools 
         run: |
           npm install -g yarn
-          yarn install
+          yarn instal
+      - name: Build Frontend
+        run: |
           yarn build
