@@ -15,3 +15,8 @@ jobs:
         with:
           version: latest
           args: -v buildAll
+      - name: Install Frontend Tools 
+        run: |
+          npm install -g yarn
+          yarn install
+          yarn build
