@@ -9,7 +9,7 @@ jobs:
       - name: Setup NodeJS environment
         uses: actions/setup-node@v1
         with: 
-          node-veresion: '12'
+          node-version: '12'
       - name: Setup Go environment 
         uses: actions/setup-go@v2
       - name: Run Mage
