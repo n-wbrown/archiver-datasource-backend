@@ -7,8 +7,8 @@ jobs:
       matrix:
         node: [12]
         include:
-          node: 14
-          continue-on-error: true
+          - node: 14
+            continue-on-error: true
     continue-on-error: ${{ matrix.continue-on-error }}
     steps:
       - name: Checkout Github repository
