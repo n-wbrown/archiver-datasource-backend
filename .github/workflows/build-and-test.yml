@@ -10,7 +10,6 @@ jobs:
         node: '14'
         continue-on-error: true
     continue-on-error: ${{ matrix.continue-on-error }}	
-    name: Build and Test archiver-datasource-backend, Node: ${{ matrix.node }}
     steps:
       - name: Checkout Github repository
         uses: actions/checkout@v2
