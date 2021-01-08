@@ -1,9 +1,14 @@
 import { DataSourcePlugin } from '@grafana/data';
+import { loadPluginCss } from '@grafana/runtime';
 import { DataSource } from './DataSource';
-import { ConfigEditor } from './ConfigEditor';
-import { QueryEditor } from './QueryEditor';
-import { MyQuery, MyDataSourceOptions } from './types';
+import { ConfigEditor, QueryEditor } from './components';
+import { AAQuery, AADataSourceOptions } from './types';
 
-export const plugin = new DataSourcePlugin<DataSource, MyQuery, MyDataSourceOptions>(DataSource)
+loadPluginCss({
+  dark: 'plugins/sasaki77-archiverappliance-datasource/styles/dark.css',
+  light: 'plugins/sasaki77-archiverappliance-datasource/styles/light.css',
+});
+
+export const plugin = new DataSourcePlugin<DataSource, AAQuery, AADataSourceOptions>(DataSource)
   .setConfigEditor(ConfigEditor)
   .setQueryEditor(QueryEditor);
