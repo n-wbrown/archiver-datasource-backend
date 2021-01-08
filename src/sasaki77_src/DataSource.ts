@@ -17,8 +17,8 @@ import {
   AADataQueryResponse,
   operatorList,
   isNumberArray,
-} from './sasaki77_src/types';
-import { applyFunctionDefs, getOptions, getToScalarFuncs } from './sasaki77_src/aafunc';
+} from './types';
+import { applyFunctionDefs, getOptions, getToScalarFuncs } from './aafunc';
 
 export class DataSource extends DataSourceApi<AAQuery, AADataSourceOptions> {
   url?: string | undefined;
