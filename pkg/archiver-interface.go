@@ -71,8 +71,15 @@ type archiverQueryModel struct {
 }
 
 func (td *ArchiverDatasource) query(ctx context.Context, query backend.DataQuery) backend.DataResponse {
-    log.DefaultLogger.Debug("Executing Query", query)
-    log.DefaultLogger.Debug("query JSON: ", query.JSON)
+    log.DefaultLogger.Debug("Executing Query",     "query",               query)
+    log.DefaultLogger.Debug("query.RefID",         "query.RefID",         query.RefID)
+    log.DefaultLogger.Debug("query.QueryType",     "query.QueryType",     query.QueryType)
+    log.DefaultLogger.Debug("query.MaxDataPoints", "query.MaxDataPoints", query.MaxDataPoints)
+    log.DefaultLogger.Debug("query.Interval",      "query.Interval",      query.Interval)
+    log.DefaultLogger.Debug("query.TimeRange",     "query.TimeRange",     query.TimeRange)
+    log.DefaultLogger.Debug("query.JSON",          "query.JSON",          query.JSON)
+
+
     // Unmarshal the json into our queryModel
     var qm archiverQueryModel
 
