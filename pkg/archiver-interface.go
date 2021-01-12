@@ -67,7 +67,25 @@ func (td *ArchiverDatasource) CheckHealth(ctx context.Context, req *backend.Chec
 }
 
 type archiverQueryModel struct {
+    // It's not apparent to me where this one originates from but it does appear to be necessary
     Format string `json:"format"`
+    Constant json.Number `json:"constant"`
+
+    // Parameters added in AAQuery's extension of DataQuery
+    Target string `json:"target"`
+    Alias string `json:"alias"`
+    Operator string `json:"operator"`
+    Regex bool `json:"regex"`
+    AliasPattern string `json:"aliasPattern"`
+    Functions json.RawMessage `json:"functions"`
+
+    // Parameters from DataQuery
+    RefId string `json:"refId"`
+    Hide *bool `json:"hide"`
+    Key *string `json:"string"`
+    QueryType *string `json:"queryType"`
+    DataTopic *string `json:"dataTopic"` //??
+    Datasource *string `json:"datasource"`
 }
 
 func (td *ArchiverDatasource) query(ctx context.Context, query backend.DataQuery) backend.DataResponse {
@@ -89,6 +107,8 @@ func (td *ArchiverDatasource) query(ctx context.Context, query backend.DataQuery
     if response.Error != nil {
         return response
     }
+    log.DefaultLogger.Debug("query.JSON unmarshalled", "qm", qm)
+    log.DefaultLogger.Debug("qm.Target", "qm.Target", qm.Target)
 
     // Log a warning if 'Format' is empty
     if qm.Format == "" {
