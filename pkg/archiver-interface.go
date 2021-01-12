@@ -7,6 +7,7 @@ import (
 	// "math/rand"
 	"net/http"
 	"time"
+    "reflect"
 
 	"github.com/grafana/grafana-plugin-sdk-go/backend"
 	"github.com/grafana/grafana-plugin-sdk-go/backend/datasource"
@@ -39,6 +40,10 @@ func (td *ArchiverDatasource) QueryData(ctx context.Context, req *backend.QueryD
     // Structure defined by grafana-plugin-sdk-go. QueryData should unpack the req argument into individual queries.
     log.DefaultLogger.Debug("Starting QueryData of newArchiverDataSource")
     log.DefaultLogger.Debug("QueryData", "request", req)
+    log.DefaultLogger.Debug("QueryData.PluginContext", "PluginContext", req.PluginContext)
+    log.DefaultLogger.Debug("QueryData.PluginContext type", "PluginContext_type", reflect.TypeOf(req.PluginContext))
+    log.DefaultLogger.Debug("Plugintype.DataSourceInstanceSettings", "settings", req.PluginContext.DataSourceInstanceSettings.URL)
+
     // create response struct
     response := backend.NewQueryDataResponse()
     // IMPLEMENT HERE
@@ -46,7 +51,7 @@ func (td *ArchiverDatasource) QueryData(ctx context.Context, req *backend.QueryD
         log.DefaultLogger.Debug("index:", idx)
         log.DefaultLogger.Debug("query:", q)
 
-        res := td.query(ctx, q)
+        res := td.query(ctx, q, req.PluginContext)
 
         // save the response in a hashmap
         // based on with RefID as identifier
@@ -67,7 +72,7 @@ func (td *ArchiverDatasource) CheckHealth(ctx context.Context, req *backend.Chec
 }
 
 type archiverQueryModel struct {
-    // It's not apparent to me where this one originates from but it does appear to be necessary
+    // It's not apparent to me where these two originate from but they do appear to be necessary
     Format string `json:"format"`
     Constant json.Number `json:"constant"`
 
@@ -88,7 +93,7 @@ type archiverQueryModel struct {
     Datasource *string `json:"datasource"`
 }
 
-func (td *ArchiverDatasource) query(ctx context.Context, query backend.DataQuery) backend.DataResponse {
+func (td *ArchiverDatasource) query(ctx context.Context, query backend.DataQuery, pluginctx backend.PluginContext) backend.DataResponse {
     log.DefaultLogger.Debug("Executing Query",     "query",               query)
     log.DefaultLogger.Debug("query.RefID",         "query.RefID",         query.RefID)
     log.DefaultLogger.Debug("query.QueryType",     "query.QueryType",     query.QueryType)
@@ -96,6 +101,7 @@ func (td *ArchiverDatasource) query(ctx context.Context, query backend.DataQuery
     log.DefaultLogger.Debug("query.Interval",      "query.Interval",      query.Interval)
     log.DefaultLogger.Debug("query.TimeRange",     "query.TimeRange",     query.TimeRange)
     log.DefaultLogger.Debug("query.JSON",          "query.JSON",          query.JSON)
+    log.DefaultLogger.Debug("pluginctx",           "pluginctx",           pluginctx)
 
 
     // Unmarshal the json into our queryModel
