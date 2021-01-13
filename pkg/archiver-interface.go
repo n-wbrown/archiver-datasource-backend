@@ -10,6 +10,7 @@ import (
 	"time"
     "reflect"
     "strings"
+    "io/ioutil"
 
 	"github.com/grafana/grafana-plugin-sdk-go/backend"
 	"github.com/grafana/grafana-plugin-sdk-go/backend/datasource"
@@ -123,17 +124,17 @@ func (td *ArchiverDatasource) query(ctx context.Context, query backend.DataQuery
     // let's extract all the relevant fields here:
 
     // data from query
-    log.DefaultLogger.Debug("query.TimeRange.From",                 "value",    query.TimeRange.From)
-    log.DefaultLogger.Debug("query.TimeRange.To",                   "value",    query.TimeRange.To)
-    log.DefaultLogger.Debug("query.QueryType",                      "value",    query.QueryType)
-    log.DefaultLogger.Debug("query.MaxDataPoints",                  "value",    query.MaxDataPoints)
-    //log.DefaultLogger.Debug("query.Interval",                      "value",    query.Interval)
+    log.DefaultLogger.Debug("query.TimeRange.From",    "value",    query.TimeRange.From)
+    log.DefaultLogger.Debug("query.TimeRange.To",      "value",    query.TimeRange.To)
+    log.DefaultLogger.Debug("query.QueryType",         "value",    query.QueryType)
+    log.DefaultLogger.Debug("query.MaxDataPoints",     "value",    query.MaxDataPoints)
+    //log.DefaultLogger.Debug("query.Interval",        "value",    query.Interval)
     // data from unmarshaled JSON
-    // log.DefaultLogger.Debug("qm.Datasource",                      "value",    qm.Datasource)
-    log.DefaultLogger.Debug("qm.Target",                             "value",    qm.Target)
-    log.DefaultLogger.Debug("qm.Regex",                             "value",    qm.Regex)
-    // log.DefaultLogger.Debug("qm.Operator",                          "value",    qm.Operator)
-    //log.DefaultLogger.Debug("qm.Functions",                         "value",    qm.Functions)
+    // log.DefaultLogger.Debug("qm.Datasource",        "value",    qm.Datasource)
+    log.DefaultLogger.Debug("qm.Target",               "value",    qm.Target)
+    log.DefaultLogger.Debug("qm.Regex",                "value",    qm.Regex)
+    // log.DefaultLogger.Debug("qm.Operator",          "value",    qm.Operator)
+    //log.DefaultLogger.Debug("qm.Functions",          "value",    qm.Functions)
 
     // data from original request's PluginContext
     log.DefaultLogger.Debug("pluginctx.DataSourceInstanceSettings.URL", "value",    pluginctx.DataSourceInstanceSettings.URL)
@@ -143,7 +144,8 @@ func (td *ArchiverDatasource) query(ctx context.Context, query backend.DataQuery
         log.DefaultLogger.Warn("format is empty. defaulting to time series")
     }
 
-    BuildQueryUrl(query, pluginctx, qm)
+    queryUrl := BuildQueryUrl(query, pluginctx, qm)
+    archiverSingleQuery(queryUrl)
 
     // create data frame response
     frame := data.NewFrame("response")
@@ -177,7 +179,7 @@ func newArchiverDataSourceInstance(setting backend.DataSourceInstanceSettings) (
 }
 
 func BuildQueryUrl(query backend.DataQuery, pluginctx backend.PluginContext, qm archiverQueryModel) string {
-
+    // Build the URL to query the archiver built from Grafana's configuration
     // Set some constants
     TIME_FORMAT := "2006-01-02T15:04:05.000Z"
     JSON_DATA_URL := "data/getData.json"
@@ -200,10 +202,75 @@ func BuildQueryUrl(query backend.DataQuery, pluginctx backend.PluginContext, qm 
     query_vals["pv"] = []string{qm.Target} 
     query_vals["from"] = []string{query.TimeRange.From.Format(TIME_FORMAT)}
     query_vals["to"] = []string{query.TimeRange.To.Format(TIME_FORMAT)}
+    query_vals["donotchunk"] = []string{""}
     u.RawQuery = query_vals.Encode()
 
     // Display the result
     log.DefaultLogger.Debug("u", "value", u)
     log.DefaultLogger.Debug("u.String", "value", u.String())
-    return "No"
+    return u.String()
+}
+
+type singleData struct {
+   times []time.Time
+   values []float64
+}
+
+type ArchiverResponseModelMeta struct {
+    Name string `json:"name"`
+    Waveform bool `json:"waveform"`
+    EGU string `json:"EGU"`
+    PREC string `json:"PREC"`
+
+}
+
+type ArchiverResponseModel struct {
+    Meta struct{
+        Name string `json:"name"`
+        Waveform bool `json:"waveform"`
+        EGU string `json:"EGU"`
+        PREC json.Number `json:"PREC"`
+    } `json:"meta"`
+    Data []struct{
+        Millis *json.Number`json:"millis,omitempty"`
+        Nanos *json.Number`json:"nanos,omitempty"`
+        Secs *json.Number`json:"secs,omitempty"`
+        Val json.Number `json:"val"`
+    } `json:"data"`
+}
+
+func archiverSingleQuery( queryUrl string) singleData {
+    // Take the unformatted response from the http GET request and turn it into rows of timeseries data
+    var sD singleData
+
+    // Make the GET request
+    httpResponse, getErr := http.Get(queryUrl)
+    if getErr != nil {
+        log.DefaultLogger.Warn("Get request has failed", "Error", getErr)
+        return sD
+    }
+
+    // Convert get request response to variable and close the file
+    jsonAsBytes, ioErr := ioutil.ReadAll(httpResponse.Body)
+    httpResponse.Body.Close()
+    if ioErr != nil {
+        log.DefaultLogger.Warn("Parsing of incoming data has failed", "Error", ioErr)
+        return sD
+    }
+
+    log.DefaultLogger.Debug("Raw data", "value", string(jsonAsBytes))
+
+    // Convert received data to JSON
+    var data []ArchiverResponseModel
+    jsonError := json.Unmarshal(jsonAsBytes, &data)
+    if jsonError != nil {
+        log.DefaultLogger.Warn("Conversion of incoming data to JSON has failed", "Error", jsonError)
+        return sD
+    }
+
+    log.DefaultLogger.Debug("Data as JSON", "value", data)
+
+
+
+    return sD
 }
