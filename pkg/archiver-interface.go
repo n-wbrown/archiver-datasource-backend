@@ -216,15 +216,8 @@ type singleData struct {
    values []float64
 }
 
-type ArchiverResponseModelMeta struct {
-    Name string `json:"name"`
-    Waveform bool `json:"waveform"`
-    EGU string `json:"EGU"`
-    PREC string `json:"PREC"`
-
-}
-
 type ArchiverResponseModel struct {
+    // Structure for unpacking the JSON response from the Archiver
     Meta struct{
         Name string `json:"name"`
         Waveform bool `json:"waveform"`
