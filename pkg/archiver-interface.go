@@ -182,7 +182,7 @@ func BuildQueryUrl(query backend.DataQuery, pluginctx backend.PluginContext, qm 
     // Build the URL to query the archiver built from Grafana's configuration
     // Set some constants
     TIME_FORMAT := "2006-01-02T15:04:05.000Z"
-    JSON_DATA_URL := "data/getData.json"
+    JSON_DATA_URL := "data/getData.qw"
 
     // Unpack the configured URL for the datasource and use that as the base for assembling the query URL
     u, err := url.Parse(pluginctx.DataSourceInstanceSettings.URL)
