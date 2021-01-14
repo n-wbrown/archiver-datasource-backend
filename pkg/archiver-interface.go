@@ -212,8 +212,8 @@ func BuildQueryUrl(query backend.DataQuery, pluginctx backend.PluginContext, qm 
 }
 
 type singleData struct {
-   times []time.Time
-   values []float64
+   Times []time.Time
+   Values []float64
 }
 
 type ArchiverResponseModel struct {
@@ -255,15 +255,36 @@ func archiverSingleQuery( queryUrl string) singleData {
 
     // Convert received data to JSON
     var data []ArchiverResponseModel
-    jsonError := json.Unmarshal(jsonAsBytes, &data)
-    if jsonError != nil {
-        log.DefaultLogger.Warn("Conversion of incoming data to JSON has failed", "Error", jsonError)
+    jsonErr := json.Unmarshal(jsonAsBytes, &data)
+    if jsonErr != nil {
+        log.DefaultLogger.Warn("Conversion of incoming data to JSON has failed", "Error", jsonErr)
         return sD
     }
 
     log.DefaultLogger.Debug("Data as JSON", "value", data)
 
+    // Build output data block
+    dataSize := len(data[0].Data)
+    log.DefaultLogger.Debug("Data size", "value", dataSize)
 
+    // initialize the slices with their final size so append operations are not necessary
+    sD.Times = make([]time.Time, dataSize, dataSize)
+    sD.Values = make([]float64, dataSize, dataSize)
 
+    for idx, dataPt := range data[0].Data {
+
+        millisCache, millisErr := dataPt.Millis.Int64()
+        if millisErr != nil {
+            log.DefaultLogger.Warn("Conversion of millis to int64 has failed", "Error", millisErr)
+        }
+        // use convert to nanoseconds
+        sD.Times[idx] = time.Unix(0, 1e6 * millisCache)
+        valCache, valErr := dataPt.Val.Float64()
+        if valErr != nil {
+            log.DefaultLogger.Warn("Conversion of val to float64 has failed", "Error", valErr)
+        }
+        sD.Values[idx] = valCache
+    }
+    log.DefaultLogger.Debug("singleData block", "Data", sD)
     return sD
 }
