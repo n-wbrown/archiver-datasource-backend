@@ -144,20 +144,21 @@ func (td *ArchiverDatasource) query(ctx context.Context, query backend.DataQuery
         log.DefaultLogger.Warn("format is empty. defaulting to time series")
     }
 
+    // make the query and compile the results into a singleData instance
     queryUrl := BuildQueryUrl(query, pluginctx, qm)
-    archiverSingleQuery(queryUrl)
+    singleResponse := archiverSingleQuery(queryUrl)
 
     // create data frame response
     frame := data.NewFrame("response")
 
     //add the time dimension
     frame.Fields = append(frame.Fields,
-        data.NewField("time", nil, []time.Time{query.TimeRange.From, query.TimeRange.To}),
+        data.NewField("time", nil, singleResponse.Times),
     )
 
     // add values 
     frame.Fields = append(frame.Fields, 
-        data.NewField("values", nil, []int64{10, 20}),
+        data.NewField("values", nil, singleResponse.Values),
     )
 
     // add the frames to the response
