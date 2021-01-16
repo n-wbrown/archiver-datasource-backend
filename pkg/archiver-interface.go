@@ -197,6 +197,17 @@ func BuildQueryUrl(query backend.DataQuery, pluginctx backend.PluginContext, qm 
     pathBuilder.WriteString("/")
     pathBuilder.WriteString(JSON_DATA_URL)
     u.Path = pathBuilder.String()
+    
+
+    zone, offset := time.Now().Zone()
+    location, _ := time.loadLocation(zone)
+    query.TimeRange.From.l
+
+    log.DefaultLogger.Debug("TimeRange.From TZ", "TZ", query.TimeRange.From.Location())
+    log.DefaultLogger.Debug("TimeRange.To TZ", "TZ", query.TimeRange.To.Location())
+
+    log.DefaultLogger.Debug("Local Timezone", "zone", zone)
+    log.DefaultLogger.Debug("Local Timezone", "offset", offset)
 
     // assemble the query of the URL and attach it to u
     query_vals :=  make(url.Values)
