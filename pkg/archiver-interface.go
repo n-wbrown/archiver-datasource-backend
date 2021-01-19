@@ -182,7 +182,7 @@ func newArchiverDataSourceInstance(setting backend.DataSourceInstanceSettings) (
 func BuildQueryUrl(query backend.DataQuery, pluginctx backend.PluginContext, qm archiverQueryModel) string {
     // Build the URL to query the archiver built from Grafana's configuration
     // Set some constants
-    TIME_FORMAT := "2006-01-02T15:04:05.000Z"
+    TIME_FORMAT := "2006-01-02T15:04:05.000-07:00"
     JSON_DATA_URL := "data/getData.qw"
 
     // Unpack the configured URL for the datasource and use that as the base for assembling the query URL
@@ -197,14 +197,31 @@ func BuildQueryUrl(query backend.DataQuery, pluginctx backend.PluginContext, qm 
     pathBuilder.WriteString("/")
     pathBuilder.WriteString(JSON_DATA_URL)
     u.Path = pathBuilder.String()
-    
 
+    location := time.Now().Location()
     zone, offset := time.Now().Zone()
-    location, _ := time.loadLocation(zone)
-    query.TimeRange.From.l
+    // location, _ := time.Location(zone)
+    // query.TimeRange.From.l
 
     log.DefaultLogger.Debug("TimeRange.From TZ", "TZ", query.TimeRange.From.Location())
+    log.DefaultLogger.Debug("TimeRange.Format", "TZ", query.TimeRange.From.Format(TIME_FORMAT))
+    log.DefaultLogger.Debug("TimeRange.In", "TZ", query.TimeRange.From.In(location))
     log.DefaultLogger.Debug("TimeRange.To TZ", "TZ", query.TimeRange.To.Location())
+
+    /*
+    new_time_from := time.Date(
+        query.TimeRange.From.Year(),
+        query.TimeRange.From.Month(),
+        query.TimeRange.From.Day(),
+        query.TimeRange.From.Hour(),
+        query.TimeRange.From.Minute(),
+        query.TimeRange.From.Second(),
+        query.TimeRange.From.Nanosecond(),
+        location)
+    */
+
+
+    
 
     log.DefaultLogger.Debug("Local Timezone", "zone", zone)
     log.DefaultLogger.Debug("Local Timezone", "offset", offset)
