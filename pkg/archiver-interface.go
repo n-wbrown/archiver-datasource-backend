@@ -163,6 +163,36 @@ func (td *ArchiverDatasource) query(ctx context.Context, query backend.DataQuery
 
     // add the frames to the response
     response.Frames = append(response.Frames, frame)
+    
+
+    //// TESTING BLOCK
+
+    // create data frame response
+    frame2 := data.NewFrame("response")
+
+    var newResponse singleData
+    newResponse.Times = make([]time.Time, 2, 2)
+    newResponse.Values = make([]float64, 2, 2)
+
+    newResponse.Times[0] = query.TimeRange.From
+    newResponse.Times[1] = query.TimeRange.To
+
+    newResponse.Values[0] = 0
+    newResponse.Values[1] = 1
+
+    //add the time dimension
+    frame2.Fields = append(frame2.Fields,
+        data.NewField("time", nil, newResponse.Times),
+    )
+
+    // add values 
+    frame2.Fields = append(frame2.Fields,
+        data.NewField("values", nil, newResponse.Values),
+    )
+    
+    // add the frames to the response
+    response.Frames = append(response.Frames, frame2)
+    //// TESTING BLOCK
 
     return response
 }
@@ -220,8 +250,6 @@ func BuildQueryUrl(query backend.DataQuery, pluginctx backend.PluginContext, qm 
         location)
     */
 
-
-    
 
     log.DefaultLogger.Debug("Local Timezone", "zone", zone)
     log.DefaultLogger.Debug("Local Timezone", "offset", offset)
@@ -294,7 +322,6 @@ func archiverSingleQuery( queryUrl string) singleData {
 
     // Build output data block
     dataSize := len(data[0].Data)
-    log.DefaultLogger.Debug("Data size", "value", dataSize)
 
     // initialize the slices with their final size so append operations are not necessary
     sD.Times = make([]time.Time, dataSize, dataSize)
