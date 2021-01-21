@@ -1,0 +1,40 @@
+{
+  "type": "datasource",
+  "name": "archiver-datasource-backend",
+  "id": "slac-national-accelerator-laboratory-archiver-datasource-backend",
+  "metrics": true,
+  "backend": true,
+  "alerting": true,
+  "executable": "gpx_archiver-datasource-backend",
+  "info": {
+    "description": "Backend plugin to connect Grafana to the EPICS Archiver Appliance",
+    "author": {
+      "name": "n-wbrown",
+      "url": ""
+    },
+    "keywords": [
+      "EPICS"
+    ],
+    "logos": {
+      "small": "img/logo.svg",
+      "large": "img/logo.svg"
+    },
+    "links": [
+      {
+        "name": "Website",
+        "url": "https://github.com/grafana/simple-datasource-backend"
+      },
+      {
+        "name": "License",
+        "url": "https://github.com/grafana/simple-datasource-backend/blob/master/LICENSE"
+      }
+    ],
+    "screenshots": [],
+    "version": "1.0.0",
+    "updated": "2021-01-09"
+  },
+  "dependencies": {
+    "grafanaVersion": "7.x.x",
+    "plugins": []
+  }
+}
