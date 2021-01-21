@@ -145,15 +145,17 @@ func (td *ArchiverDatasource) query(ctx context.Context, query backend.DataQuery
         log.DefaultLogger.Warn("format is empty. defaulting to time series")
     }
 
-    // make the query and compile the results into a singleData instance
-    responseData := make([]singleData, 0)
+    // make the query and compile the results into a SingleData instance
+    responseData := make([]SingleData, 0)
     if qm.Regex {
         regexUrl := BuildRegexUrl(qm.Target, pluginctx)
-        data := archiverRegexQuery(regexUrl)
+        data := ArchiverRegexQuery(regexUrl)
         log.DefaultLogger.Debug("regex data", "value", data)
     } else {
         queryUrl := BuildQueryUrl(qm.Target, query, pluginctx, qm)
-        responseData = append(responseData, archiverSingleQuery(queryUrl))
+        queryResponse, _ := ArchiverSingleQuery(queryUrl)
+        parsedResponse, _ := ArchiverSingleQueryParser(queryResponse)
+        responseData = append(responseData, parsedResponse)
     }
 
     for _, singleResponse := range responseData {
@@ -179,7 +181,7 @@ func (td *ArchiverDatasource) query(ctx context.Context, query backend.DataQuery
     // create data frame response
     frame2 := data.NewFrame("response")
 
-    var newResponse singleData
+    var newResponse SingleData
     newResponse.Times = make([]time.Time, 2, 2)
     newResponse.Values = make([]float64, 2, 2)
 
@@ -277,7 +279,7 @@ func BuildQueryUrl(target string, query backend.DataQuery, pluginctx backend.Plu
     return u.String()
 }
 
-type singleData struct {
+type SingleData struct {
    Times []time.Time
    Values []float64
 }
@@ -298,15 +300,15 @@ type ArchiverResponseModel struct {
     } `json:"data"`
 }
 
-func archiverSingleQuery(queryUrl string) singleData {
+func ArchiverSingleQuery(queryUrl string) ([]byte, error){
     // Take the unformatted response from the http GET request and turn it into rows of timeseries data
-    var sD singleData
+    var jsonAsBytes []byte
 
     // Make the GET request
     httpResponse, getErr := http.Get(queryUrl)
     if getErr != nil {
         log.DefaultLogger.Warn("Get request has failed", "Error", getErr)
-        return sD
+        return jsonAsBytes, getErr
     }
 
     // Convert get request response to variable and close the file
@@ -314,17 +316,21 @@ func archiverSingleQuery(queryUrl string) singleData {
     httpResponse.Body.Close()
     if ioErr != nil {
         log.DefaultLogger.Warn("Parsing of incoming data has failed", "Error", ioErr)
-        return sD
+        return jsonAsBytes, ioErr
     }
 
     // log.DefaultLogger.Debug("Raw data", "value", string(jsonAsBytes))
+    return jsonAsBytes, nil
+}
 
+func ArchiverSingleQueryParser(jsonAsBytes []byte) (SingleData, error){
     // Convert received data to JSON
+    var sD SingleData
     var data []ArchiverResponseModel
     jsonErr := json.Unmarshal(jsonAsBytes, &data)
     if jsonErr != nil {
         log.DefaultLogger.Warn("Conversion of incoming data to JSON has failed", "Error", jsonErr)
-        return sD
+        return sD, jsonErr
     }
 
     // log.DefaultLogger.Debug("Data as JSON", "value", data)
@@ -350,8 +356,8 @@ func archiverSingleQuery(queryUrl string) singleData {
         }
         sD.Values[idx] = valCache
     }
-    // log.DefaultLogger.Debug("singleData block", "Data", sD)
-    return sD
+    // log.DefaultLogger.Debug("SingleData block", "Data", sD)
+    return sD, nil
 }
 
 func BuildRegexUrl(regex string, pluginctx backend.PluginContext) string {
@@ -382,7 +388,7 @@ func BuildRegexUrl(regex string, pluginctx backend.PluginContext) string {
     return u.String()
 }
 
-func archiverRegexQuery(queryUrl string) []string {
+func ArchiverRegexQuery(queryUrl string) []string {
     // Make the GET request  for the JSON list of matching PVs, parse it, and return a list of strings
     var pvList []string
 
