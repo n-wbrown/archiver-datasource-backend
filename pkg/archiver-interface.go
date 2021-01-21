@@ -51,9 +51,9 @@ func (td *ArchiverDatasource) QueryData(ctx context.Context, req *backend.QueryD
     // create response struct
     response := backend.NewQueryDataResponse()
     // IMPLEMENT HERE
-    for idx, q := range req.Queries {
-        log.DefaultLogger.Debug("index:", idx)
-        log.DefaultLogger.Debug("query:", q)
+    for _, q := range req.Queries {
+        // log.DefaultLogger.Debug("index:", idx)
+        // log.DefaultLogger.Debug("query:", q)
 
         res := td.query(ctx, q, req.PluginContext)
 
@@ -147,15 +147,25 @@ func (td *ArchiverDatasource) query(ctx context.Context, query backend.DataQuery
 
     // make the query and compile the results into a SingleData instance
     responseData := make([]SingleData, 0)
+
     if qm.Regex {
         regexUrl := BuildRegexUrl(qm.Target, pluginctx)
         regexQueryResponse, _ := ArchiverRegexQuery(regexUrl)
-        regexParsedResponse, _ := ArchiverSingleQueryParser(regexQueryResponse)
+        log.DefaultLogger.Debug("regex response", "value", string(regexQueryResponse))
+        regexParsedResponse, _ := ArchiverRegexQueryParser(regexQueryResponse)
         log.DefaultLogger.Debug("regex data", "value", regexParsedResponse)
+        for idx, target_pv := range regexParsedResponse {
+            log.DefaultLogger.Debug("idx", "value", idx)
+            log.DefaultLogger.Debug("regex", "value", target_pv)
+            parsedResponse, _ := ExecuteSingleQuery(target_pv, query, pluginctx, qm)
+            responseData = append(responseData, parsedResponse)
+
+        }
     } else {
-        queryUrl := BuildQueryUrl(qm.Target, query, pluginctx, qm)
-        queryResponse, _ := ArchiverSingleQuery(queryUrl)
-        parsedResponse, _ := ArchiverSingleQueryParser(queryResponse)
+        // queryUrl := BuildQueryUrl(qm.Target, query, pluginctx, qm)
+        // queryResponse, _ := ArchiverSingleQuery(queryUrl)
+        // parsedResponse, _ := ArchiverSingleQueryParser(queryResponse)
+        parsedResponse, _ := ExecuteSingleQuery(qm.Target, query, pluginctx, qm)
         responseData = append(responseData, parsedResponse)
     }
 
@@ -177,34 +187,34 @@ func (td *ArchiverDatasource) query(ctx context.Context, query backend.DataQuery
         response.Frames = append(response.Frames, frame)
     }
 
-    //// TESTING BLOCK  
+    // //// TESTING BLOCK  
 
-    // create data frame response
-    frame2 := data.NewFrame("response")
+    // // create data frame response
+    // frame2 := data.NewFrame("response")
 
-    var newResponse SingleData
-    newResponse.Times = make([]time.Time, 2, 2)
-    newResponse.Values = make([]float64, 2, 2)
+    // var newResponse SingleData
+    // newResponse.Times = make([]time.Time, 2, 2)
+    // newResponse.Values = make([]float64, 2, 2)
 
-    newResponse.Times[0] = query.TimeRange.From
-    newResponse.Times[1] = query.TimeRange.To
+    // newResponse.Times[0] = query.TimeRange.From
+    // newResponse.Times[1] = query.TimeRange.To
 
-    newResponse.Values[0] = 0
-    newResponse.Values[1] = 1
+    // newResponse.Values[0] = 0
+    // newResponse.Values[1] = 1
 
-    //add the time dimension
-    frame2.Fields = append(frame2.Fields,
-        data.NewField("time", nil, newResponse.Times),
-    )
+    // //add the time dimension
+    // frame2.Fields = append(frame2.Fields,
+    //     data.NewField("time", nil, newResponse.Times),
+    // )
 
-    // add values 
-    frame2.Fields = append(frame2.Fields,
-        data.NewField("values", nil, newResponse.Values),
-    )
+    // // add values 
+    // frame2.Fields = append(frame2.Fields,
+    //     data.NewField("values", nil, newResponse.Values),
+    // )
 
-    // add the frames to the response
-    response.Frames = append(response.Frames, frame2)
-    //// TESTING BLOCK
+    // // add the frames to the response
+    // response.Frames = append(response.Frames, frame2)
+    // //// TESTING BLOCK
 
     return response
 }
@@ -420,3 +430,13 @@ func ArchiverRegexQueryParser(jsonAsBytes []byte) ([]string, error){
 
     return pvList, nil
 }
+
+func ExecuteSingleQuery(target string, query backend.DataQuery, pluginctx backend.PluginContext, qm archiverQueryModel) (SingleData, error) {
+    // wrap together the individual operations build a query, execute the query, and compile the data into a singleData structure
+    // target: This is the PV to be queried for. As the "query" argument may be a regular expression, the specific PV desired must be specified
+    queryUrl := BuildQueryUrl(target, query, pluginctx, qm)
+    queryResponse, _ := ArchiverSingleQuery(queryUrl)
+    parsedResponse, _ := ArchiverSingleQueryParser(queryResponse)
+    return parsedResponse, nil
+}
+
