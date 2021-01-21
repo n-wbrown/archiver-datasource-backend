@@ -149,8 +149,9 @@ func (td *ArchiverDatasource) query(ctx context.Context, query backend.DataQuery
     responseData := make([]SingleData, 0)
     if qm.Regex {
         regexUrl := BuildRegexUrl(qm.Target, pluginctx)
-        data := ArchiverRegexQuery(regexUrl)
-        log.DefaultLogger.Debug("regex data", "value", data)
+        regexQueryResponse, _ := ArchiverRegexQuery(regexUrl)
+        regexParsedResponse, _ := ArchiverSingleQueryParser(regexQueryResponse)
+        log.DefaultLogger.Debug("regex data", "value", regexParsedResponse)
     } else {
         queryUrl := BuildQueryUrl(qm.Target, query, pluginctx, qm)
         queryResponse, _ := ArchiverSingleQuery(queryUrl)
@@ -207,7 +208,6 @@ func (td *ArchiverDatasource) query(ctx context.Context, query backend.DataQuery
 
     return response
 }
-
 
 type archiverInstanceSettings struct {
 	httpClient *http.Client
@@ -388,15 +388,15 @@ func BuildRegexUrl(regex string, pluginctx backend.PluginContext) string {
     return u.String()
 }
 
-func ArchiverRegexQuery(queryUrl string) []string {
+func ArchiverRegexQuery(queryUrl string) ([]byte, error){
     // Make the GET request  for the JSON list of matching PVs, parse it, and return a list of strings
-    var pvList []string
+    var jsonAsBytes []byte
 
     // Make the GET request
     httpResponse, getErr := http.Get(queryUrl)
     if getErr != nil {
         log.DefaultLogger.Warn("Get request has failed", "Error", getErr)
-        return pvList
+        return jsonAsBytes, getErr
     }
 
     // Convert get request response to variable and close the file
@@ -404,17 +404,19 @@ func ArchiverRegexQuery(queryUrl string) []string {
     httpResponse.Body.Close()
     if ioErr != nil {
         log.DefaultLogger.Warn("Parsing of incoming data has failed", "Error", ioErr)
-        return pvList
+        return jsonAsBytes, ioErr
     }
+    return jsonAsBytes, nil
+}
 
+func ArchiverRegexQueryParser(jsonAsBytes []byte) ([]string, error){
     // Convert received data to JSON
-    var data []string
-    jsonErr := json.Unmarshal(jsonAsBytes, &data)
+    var pvList []string
+    jsonErr := json.Unmarshal(jsonAsBytes, &pvList)
     if jsonErr != nil {
         log.DefaultLogger.Warn("Conversion of incoming data to JSON has failed", "Error", jsonErr)
-        return pvList
+        return pvList, jsonErr
     }
 
-    return data
-
+    return pvList, nil
 }
