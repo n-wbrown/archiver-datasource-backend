@@ -147,7 +147,7 @@ func (td *ArchiverDatasource) query(ctx context.Context, query backend.DataQuery
 
     // make the query and compile the results into a SingleData instance
     responseData := make([]SingleData, 0)
-
+    targetPvList := make([]string,0) 
     if qm.Regex {
         // If the user is using a regex to specify the PVs, parse and resolve the regex expression first
 
@@ -155,23 +155,18 @@ func (td *ArchiverDatasource) query(ctx context.Context, query backend.DataQuery
         regexUrl := BuildRegexUrl(qm.Target, pluginctx)
         regexQueryResponse, _ := ArchiverRegexQuery(regexUrl)
         log.DefaultLogger.Debug("regex response", "value", string(regexQueryResponse))
-        regexParsedResponse, _ := ArchiverRegexQueryParser(regexQueryResponse)
-        log.DefaultLogger.Debug("regex data", "value", regexParsedResponse)
-        // execute the individual queries
-        for idx, target_pv := range regexParsedResponse {
-            log.DefaultLogger.Debug("idx", "value", idx)
-            log.DefaultLogger.Debug("regex", "value", target_pv)
-            parsedResponse, _ := ExecuteSingleQuery(target_pv, query, pluginctx, qm)
-            responseData = append(responseData, parsedResponse)
-
-        }
+        targetPvList, _ = ArchiverRegexQueryParser(regexQueryResponse)
+        log.DefaultLogger.Debug("regex data", "value", targetPvList)
     } else {
-        // If a regex is not being used, make a simple query
+        // If a regex is not being used, only check for listed PVs
+        targetPvList = IsolateBasicQuery(qm.Target)
+    }
 
-        // assemble the list of PVs to be queried for
-        
-        // execute the individual queries 
-        parsedResponse, _ := ExecuteSingleQuery(qm.Target, query, pluginctx, qm)
+    // execute the individual queries
+    for idx, targetPv := range targetPvList {
+        log.DefaultLogger.Debug("idx", "value", idx)
+        log.DefaultLogger.Debug("regex", "value", targetPv)
+        parsedResponse, _ := ExecuteSingleQuery(targetPv, query, pluginctx, qm)
         responseData = append(responseData, parsedResponse)
     }
 
