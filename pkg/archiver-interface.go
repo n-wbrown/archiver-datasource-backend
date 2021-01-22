@@ -420,6 +420,14 @@ func ExecuteSingleQuery(target string, query backend.DataQuery, pluginctx backen
 func IsolateBasicQuery(unparsed string) []string {
     // Non-regex queries can request multiple PVs using this syntax: (PV:NAME:1|PV:NAME:2|...)
     // This function takes queries in this format and breaks them up into a list of individual PVs
-    return []string{"FAIL"}
+    unparsed_clean := strings.TrimSpace(unparsed)
+    if unparsed_clean[0] != '(' || unparsed_clean[len(unparsed_clean)-1] != ')' {
+        // if the statement doesn't have the parentheses, no parsing is necessary
+        return []string{unparsed_clean}
+    }
+    // remove leading and following parentheses
+    unparsed_clean = unparsed_clean[1:len(unparsed_clean)-1]
+    result := strings.Split(unparsed_clean, "|")
+    return result
 }
 
