@@ -150,11 +150,14 @@ func (td *ArchiverDatasource) query(ctx context.Context, query backend.DataQuery
 
     if qm.Regex {
         // If the user is using a regex to specify the PVs, parse and resolve the regex expression first
+
+        // assemble the list of PVs to be queried for
         regexUrl := BuildRegexUrl(qm.Target, pluginctx)
         regexQueryResponse, _ := ArchiverRegexQuery(regexUrl)
         log.DefaultLogger.Debug("regex response", "value", string(regexQueryResponse))
         regexParsedResponse, _ := ArchiverRegexQueryParser(regexQueryResponse)
         log.DefaultLogger.Debug("regex data", "value", regexParsedResponse)
+        // execute the individual queries
         for idx, target_pv := range regexParsedResponse {
             log.DefaultLogger.Debug("idx", "value", idx)
             log.DefaultLogger.Debug("regex", "value", target_pv)
@@ -164,6 +167,10 @@ func (td *ArchiverDatasource) query(ctx context.Context, query backend.DataQuery
         }
     } else {
         // If a regex is not being used, make a simple query
+
+        // assemble the list of PVs to be queried for
+        
+        // execute the individual queries 
         parsedResponse, _ := ExecuteSingleQuery(qm.Target, query, pluginctx, qm)
         responseData = append(responseData, parsedResponse)
     }
@@ -408,5 +415,11 @@ func ExecuteSingleQuery(target string, query backend.DataQuery, pluginctx backen
     queryResponse, _ := ArchiverSingleQuery(queryUrl)
     parsedResponse, _ := ArchiverSingleQueryParser(queryResponse)
     return parsedResponse, nil
+}
+
+func IsolateBasicQuery(unparsed string) []string {
+    // Non-regex queries can request multiple PVs using this syntax: (PV:NAME:1|PV:NAME:2|...)
+    // This function takes queries in this format and breaks them up into a list of individual PVs
+    return []string{"FAIL"}
 }
 
