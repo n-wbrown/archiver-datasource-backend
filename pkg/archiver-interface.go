@@ -149,6 +149,7 @@ func (td *ArchiverDatasource) query(ctx context.Context, query backend.DataQuery
     responseData := make([]SingleData, 0)
 
     if qm.Regex {
+        // If the user is using a regex to specify the PVs, parse and resolve the regex expression first
         regexUrl := BuildRegexUrl(qm.Target, pluginctx)
         regexQueryResponse, _ := ArchiverRegexQuery(regexUrl)
         log.DefaultLogger.Debug("regex response", "value", string(regexQueryResponse))
@@ -162,9 +163,7 @@ func (td *ArchiverDatasource) query(ctx context.Context, query backend.DataQuery
 
         }
     } else {
-        // queryUrl := BuildQueryUrl(qm.Target, query, pluginctx, qm)
-        // queryResponse, _ := ArchiverSingleQuery(queryUrl)
-        // parsedResponse, _ := ArchiverSingleQueryParser(queryResponse)
+        // If a regex is not being used, make a simple query
         parsedResponse, _ := ExecuteSingleQuery(qm.Target, query, pluginctx, qm)
         responseData = append(responseData, parsedResponse)
     }
@@ -186,35 +185,6 @@ func (td *ArchiverDatasource) query(ctx context.Context, query backend.DataQuery
         // add the frames to the response
         response.Frames = append(response.Frames, frame)
     }
-
-    // //// TESTING BLOCK  
-
-    // // create data frame response
-    // frame2 := data.NewFrame("response")
-
-    // var newResponse SingleData
-    // newResponse.Times = make([]time.Time, 2, 2)
-    // newResponse.Values = make([]float64, 2, 2)
-
-    // newResponse.Times[0] = query.TimeRange.From
-    // newResponse.Times[1] = query.TimeRange.To
-
-    // newResponse.Values[0] = 0
-    // newResponse.Values[1] = 1
-
-    // //add the time dimension
-    // frame2.Fields = append(frame2.Fields,
-    //     data.NewField("time", nil, newResponse.Times),
-    // )
-
-    // // add values 
-    // frame2.Fields = append(frame2.Fields,
-    //     data.NewField("values", nil, newResponse.Values),
-    // )
-
-    // // add the frames to the response
-    // response.Frames = append(response.Frames, frame2)
-    // //// TESTING BLOCK
 
     return response
 }
@@ -373,7 +343,7 @@ func ArchiverSingleQueryParser(jsonAsBytes []byte) (SingleData, error){
 func BuildRegexUrl(regex string, pluginctx backend.PluginContext) string {
     // Construct the request URL for the regex search of PVs and return it as a string
     REGEX_URL := "bpl/getMatchingPVs"
-    REGEX_MAXIMUM_MATCHES := 100
+    REGEX_MAXIMUM_MATCHES := 1000
 
     // Unpack the configured URL for the datasource and use that as the base for assembling the query URL
     u, err := url.Parse(pluginctx.DataSourceInstanceSettings.URL)
@@ -390,8 +360,8 @@ func BuildRegexUrl(regex string, pluginctx backend.PluginContext) string {
 
     // assemble the query of the URL and attach it to u
     query_vals :=  make(url.Values)
-    query_vals["regex"] = []string{regex} 
-    query_vals["limit"] = []string{strconv.Itoa(REGEX_MAXIMUM_MATCHES)} 
+    query_vals["regex"] = []string{regex}
+    query_vals["limit"] = []string{strconv.Itoa(REGEX_MAXIMUM_MATCHES)}
     u.RawQuery = query_vals.Encode()
 
     // log.DefaultLogger.Debug("u.String", "value", u.String())
