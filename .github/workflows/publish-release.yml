@@ -37,7 +37,7 @@ jobs:
       - name: Build Frontend
         run: |
           yarn build
-			- name: Create Release
+      - name: Create Release
         id: create_release
         uses: actions/create-release@v1
         env:
@@ -51,12 +51,12 @@ jobs:
             - Second Change
           draft: false
           prerelease: false
-			- name: Prepare Release
+      - name: Prepare Release
         run: |
-          rm appveyor.yml Magefile.go go.sum go.mod jest.config.js package-lock.json package.json \
+          rm appveyor.yml Magefile.go go.sum go.mod jest.config.js package-lock.json \
             yarn-error.log yarn.lock
           rm -Rf config coverage node_modules pkg src
-					zip --junk-paths 
+          zip --junk-paths -r archiver-datasource-backend.zip ./
       - name: Upload Release Asset
         id: upload-release-asset 
         uses: actions/upload-release-asset@v1
