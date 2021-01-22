@@ -166,6 +166,7 @@ func (td *ArchiverDatasource) query(ctx context.Context, query backend.DataQuery
         responseData = append(responseData, parsedResponse)
     }
 
+    // for each query response, compile the data into response.Framse
     for _, singleResponse := range responseData {
         // create data frame response
         frame := data.NewFrame("response")
