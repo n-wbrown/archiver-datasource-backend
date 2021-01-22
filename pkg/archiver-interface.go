@@ -154,18 +154,14 @@ func (td *ArchiverDatasource) query(ctx context.Context, query backend.DataQuery
         // assemble the list of PVs to be queried for
         regexUrl := BuildRegexUrl(qm.Target, pluginctx)
         regexQueryResponse, _ := ArchiverRegexQuery(regexUrl)
-        log.DefaultLogger.Debug("regex response", "value", string(regexQueryResponse))
         targetPvList, _ = ArchiverRegexQueryParser(regexQueryResponse)
-        log.DefaultLogger.Debug("regex data", "value", targetPvList)
     } else {
         // If a regex is not being used, only check for listed PVs
         targetPvList = IsolateBasicQuery(qm.Target)
     }
 
     // execute the individual queries
-    for idx, targetPv := range targetPvList {
-        log.DefaultLogger.Debug("idx", "value", idx)
-        log.DefaultLogger.Debug("regex", "value", targetPv)
+    for _, targetPv := range targetPvList {
         parsedResponse, _ := ExecuteSingleQuery(targetPv, query, pluginctx, qm)
         responseData = append(responseData, parsedResponse)
     }
