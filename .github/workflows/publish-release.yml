@@ -53,8 +53,10 @@ jobs:
           prerelease: false
       - name: Prepare Release
         run: |
+          ls
           rm appveyor.yml Magefile.go go.sum go.mod jest.config.js package-lock.json \
-            yarn-error.log yarn.lock
+            yarn.lock
+          rm yarn-error.log || true
           rm -Rf config coverage node_modules pkg src
           zip --junk-paths -r archiver-datasource-backend.zip ./
       - name: Upload Release Asset
