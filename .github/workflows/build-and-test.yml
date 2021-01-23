@@ -1,8 +1,5 @@
 name: build-and-test.yml
-on:
-  push:
-    tags-ignore:
-      - '**' # don't run this action on tags
+on: [push]
 jobs:
   build-and-test-plugin:
     runs-on: ubuntu-latest
