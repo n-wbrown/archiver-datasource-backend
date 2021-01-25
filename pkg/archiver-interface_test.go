@@ -18,6 +18,33 @@ func TestBuildRegexUrl(t *testing.T) {
 }
 
 func TestArchiverRegexQueryParser(t *testing.T) {
+    var tests = []struct{
+        input []byte
+        output []string
+    }{
+        {input: []byte("[\"MR1K1:BEND:PIP:1:PMON\",\"MR1K3:BEND:PIP:1:PMON\"]"), output: []string{"MR1K1:BEND:PIP:1:PMON","MR1K3:BEND:PIP:1:PMON"}},
+        {input: []byte("[\"MR1K3:BEND:PIP:1:PMON\"]"), output: []string{"MR1K3:BEND:PIP:1:PMON"}},
+        {input: []byte("[]"), output: []string{}},
+    }
+
+    for idx, testCase := range tests {
+        testName := fmt.Sprintf("%d: %s, %s", idx, testCase.input, testCase.output)
+        t.Run(testName, func(t *testing.T) {
+            // result := testCase.output
+            result, err := ArchiverRegexQueryParser(testCase.input)
+            if err != nil {
+                t.Fatalf("An unexpected error has occurred")
+            }
+            if len(result) != len(testCase.output) {
+                t.Fatalf("Lengths differ - Wanted: %v Got: %v", testCase.output, result)
+            }
+            for idx, _ := range(testCase.output) {
+                if testCase.output[idx] != result[idx] {
+                    t.Errorf("got %v, want %v", result, testCase.output)
+                }
+            }
+        })
+    }
 }
 
 func TestIsolateBasicQuery(t *testing.T) {
@@ -45,12 +72,4 @@ func TestIsolateBasicQuery(t *testing.T) {
             }
         })
     }
-}
-
-
-
-
-func TestFails(t *testing.T) {
-    // This function and always fails
-    // t.Error("This is an example of test failure")
 }
