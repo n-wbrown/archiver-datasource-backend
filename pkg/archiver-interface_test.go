@@ -6,15 +6,19 @@ import (
 )
 
 func TestBuildQueryUrl(t *testing.T) {
+    t.Skipf("Test not implemented")
 }
 
 func TestArchiverSingleQuery(t *testing.T) {
+    t.Skipf("Test not implemented")
 }
 
 func TestArchiverSingleQueryParser(t *testing.T) {
+    t.Skipf("Test not implemented")
 }
 
 func TestBuildRegexUrl(t *testing.T) {
+    t.Skipf("Test not implemented")
 }
 
 func TestArchiverRegexQueryParser(t *testing.T) {
