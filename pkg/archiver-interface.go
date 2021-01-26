@@ -118,7 +118,7 @@ func (td *ArchiverDatasource) query(ctx context.Context, query backend.DataQuery
     if response.Error != nil {
         return response
     }
-    // log.DefaultLogger.Debug("query.JSON unmarshalled", "qm", qm)
+    log.DefaultLogger.Debug("query.JSON unmarshalled", "qm", qm)
     // log.DefaultLogger.Debug("qm.Target", "qm.Target", qm.Target)
 
 
