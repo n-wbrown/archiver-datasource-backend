@@ -2,6 +2,8 @@ package main
 
 import (
     "fmt"
+    "math"
+	"io/ioutil"
     "testing"
 )
 
@@ -14,7 +16,58 @@ func TestArchiverSingleQuery(t *testing.T) {
 }
 
 func TestArchiverSingleQueryParser(t *testing.T) {
-    t.Skipf("Test not implemented")
+    ARCHIVER_FLOAT_PRECISION := 1e-18
+    type responseParams struct{
+        length int
+        firstVal float64
+        lastVal float64
+    }
+
+    var dataNames = []struct{
+        fileName string
+        output responseParams
+    }{
+        {fileName: "test_data/good_query_response_01.JSON", output: responseParams{length: 612, firstVal: 0.005249832756817341, lastVal: 0.005262143909931183}},
+    }
+
+    type testData struct {
+        input []byte
+        output responseParams
+    }
+
+    var tests []testData
+    for _, entry := range dataNames {
+        fileData, err := ioutil.ReadFile(entry.fileName)
+        if err != nil {
+            t.Fatalf("Failed to load test data: %v", err)
+        }
+        tests = append(tests, testData{input: fileData, output: entry.output})
+    }
+
+    for idx, testCase := range tests {
+        testName := fmt.Sprintf("Case: %d", idx)
+        t.Run(testName, func(t *testing.T) {
+            // result := testCase.output
+            result, err := ArchiverSingleQueryParser(testCase.input)
+            if err != nil {
+                t.Fatalf("An unexpected error has occurred")
+            }
+            if len(result.Times) != len(result.Values){
+                t.Fatalf("Lengths of Times and Values differ - Times: %v Values: %v", len(result.Times), len(result.Values))
+            }
+            resultLength := len(result.Times)
+            if resultLength != testCase.output.length {
+                t.Fatalf("Lengths differ - Wanted: %v Got: %v", testCase.output.length, resultLength)
+            }
+            if math.Abs(result.Values[0] - testCase.output.firstVal) > ARCHIVER_FLOAT_PRECISION {
+                t.Fatalf("First values differ - Wanted: %v Got: %v", testCase.output.firstVal, result.Values[0])
+            }
+            if math.Abs(result.Values[resultLength-1] - testCase.output.lastVal) > ARCHIVER_FLOAT_PRECISION {
+                t.Fatalf("Last values differ - Wanted: %v Got: %v", testCase.output.lastVal, result.Values[resultLength-1])
+            }
+        })
+    }
+
 }
 
 func TestBuildRegexUrl(t *testing.T) {
