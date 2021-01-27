@@ -71,14 +71,29 @@ type FuncDefParamQueryModel struct {
 func BuildQueryUrl(target string, query backend.DataQuery, pluginctx backend.PluginContext, qm ArchiverQueryModel) string {
     // Build the URL to query the archiver built from Grafana's configuration
     // Set some constants
+
+    log.DefaultLogger.Debug("target", "target", target)
+    log.DefaultLogger.Debug("query", "query", query)
+    log.DefaultLogger.Debug("pluginctx", "pluginctx", pluginctx)
+    log.DefaultLogger.Debug("qm", "qm", qm)
+
     const TIME_FORMAT = "2006-01-02T15:04:05.000-07:00"
     const JSON_DATA_URL = "data/getData.qw"
 
     // Unpack the configured URL for the datasource and use that as the base for assembling the query URL
     u, err := url.Parse(pluginctx.DataSourceInstanceSettings.URL)
-        if err != nil {
+    if err != nil {
         log.DefaultLogger.Warn("err", "err", err)
     }
+
+    // optionally apply operators if if noe (not "raw") is provided
+    /*
+    useOperator := false
+    var operator string
+    if !(qm.Operator == "" || qm.Operator == "raw") {
+        if OperatorValidator(qm.Operator)
+    }
+    */
 
     // amend the incomplete path
     var pathBuilder strings.Builder
@@ -86,32 +101,6 @@ func BuildQueryUrl(target string, query backend.DataQuery, pluginctx backend.Plu
     pathBuilder.WriteString("/")
     pathBuilder.WriteString(JSON_DATA_URL)
     u.Path = pathBuilder.String()
-
-    // location := time.Now().Location()
-    // zone, offset := time.Now().Zone()
-    // location, _ := time.Location(zone)
-    // query.TimeRange.From.l
-
-    //log.DefaultLogger.Debug("TimeRange.From TZ", "TZ", query.TimeRange.From.Location())
-    //log.DefaultLogger.Debug("TimeRange.Format", "TZ", query.TimeRange.From.Format(TIME_FORMAT))
-    //log.DefaultLogger.Debug("TimeRange.In", "TZ", query.TimeRange.From.In(location))
-    //log.DefaultLogger.Debug("TimeRange.To TZ", "TZ", query.TimeRange.To.Location())
-
-    /*
-    new_time_from := time.Date(
-        query.TimeRange.From.Year(),
-        query.TimeRange.From.Month(),
-        query.TimeRange.From.Day(),
-        query.TimeRange.From.Hour(),
-        query.TimeRange.From.Minute(),
-        query.TimeRange.From.Second(),
-        query.TimeRange.From.Nanosecond(),
-        location)
-    */
-
-
-    //log.DefaultLogger.Debug("Local Timezone", "zone", zone)
-    //log.DefaultLogger.Debug("Local Timezone", "offset", offset)
 
     // assemble the query of the URL and attach it to u
     query_vals :=  make(url.Values)

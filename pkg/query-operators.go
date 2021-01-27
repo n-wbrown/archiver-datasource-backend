@@ -45,3 +45,7 @@ func (qm ArchiverQueryModel) IdentifyFunctionsByName(targetName string) []Functi
     }
     return response
 }
+
+// func CreateOperatorQuery(qm ArchiverQueryModel) string {
+// }
+
