@@ -15,7 +15,7 @@ import (
 	"github.com/grafana/grafana-plugin-sdk-go/backend/log"
 )
 
-type archiverQueryModel struct {
+type ArchiverQueryModel struct {
     // It's not apparent to me where these two originate from but they do appear to be necessary
     Format string `json:"format"`
     Constant json.Number `json:"constant"` // I don't know what this is for yet
@@ -27,7 +27,13 @@ type archiverQueryModel struct {
     AliasPattern string `json:"aliasPattern"` // use for collecting a large number of returned values 
     Operator string `json:"operator"` // ?
     Regex bool `json:"regex"` // configured by the user's setting of the "Regex" field in the panel
-    Functions json.RawMessage `json:"functions"` // collection of functions to applied to the data by the archiver
+    Functions []FunctionDescriptorQueryModel `json:"functions"` // collection of functions to be applied to the data by the archiver
+    /*
+        Functions is a few layers deep:
+        Functions []FunctionDescriptorQueryModel contains: 
+            Def FuncDefQueryModel contains:
+                Params []FuncDefParamQueryModel
+    */
 
     // Parameters from DataQuery
     RefId string `json:"refId"`
@@ -38,7 +44,31 @@ type archiverQueryModel struct {
     Datasource *string `json:"datasource"` // comes back empty -- investigate further 
 }
 
-func BuildQueryUrl(target string, query backend.DataQuery, pluginctx backend.PluginContext, qm archiverQueryModel) string {
+type FunctionDescriptorQueryModel struct {
+    // Matched to FunctionDescriptor in types.ts
+    Params []string `json:"params"`
+    Def FuncDefQueryModel `json:"def"`
+}
+
+type FuncDefQueryModel struct {
+    // Matched to FuncDef in types.ts
+    DefaultParams *json.RawMessage `json:"defaultParams,omitempty"`
+    ShortName *json.RawMessage `json:"shortName,omitempty"`
+    Version *json.RawMessage `json:"version,omitempty"`
+    Category string `json:"category"`
+    Description *string `json:"description,omitempty"`
+    Fake *bool `"json:"fake,omitempty"`
+    Name string `json:"name"`
+    Params []FuncDefParamQueryModel `json:"params"`
+}
+
+type FuncDefParamQueryModel struct {
+    Name string `json"name"`
+    Options *[]string `json:"options"`
+    Type string `json:"type"`
+}
+
+func BuildQueryUrl(target string, query backend.DataQuery, pluginctx backend.PluginContext, qm ArchiverQueryModel) string {
     // Build the URL to query the archiver built from Grafana's configuration
     // Set some constants
     const TIME_FORMAT = "2006-01-02T15:04:05.000-07:00"
@@ -239,7 +269,7 @@ func ArchiverRegexQueryParser(jsonAsBytes []byte) ([]string, error){
     return pvList, nil
 }
 
-func ExecuteSingleQuery(target string, query backend.DataQuery, pluginctx backend.PluginContext, qm archiverQueryModel) (SingleData, error) {
+func ExecuteSingleQuery(target string, query backend.DataQuery, pluginctx backend.PluginContext, qm ArchiverQueryModel) (SingleData, error) {
     // wrap together the individual operations build a query, execute the query, and compile the data into a singleData structure
     // target: This is the PV to be queried for. As the "query" argument may be a regular expression, the specific PV desired must be specified
     queryUrl := BuildQueryUrl(target, query, pluginctx, qm)

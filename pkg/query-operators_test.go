@@ -25,3 +25,29 @@ func TestOperatorValidator(t *testing.T) {
         })
     }
 }
+
+func TestIdentifyFunctionsByName(t *testing.T) {
+    var tests = []struct{
+        input ArchiverQueryModel
+        inputString string
+        output []FunctionDescriptorQueryModel
+    }{
+        {
+            input: ArchiverQueryModel{Functions: []FunctionDescriptorQueryModel{{Def: FuncDefQueryModel{Name: "binInterval"}}}},
+            inputString: "binInterval",
+            output: []FunctionDescriptorQueryModel{{Def: FuncDefQueryModel{Name: "binInterval"}}},
+        },
+    }
+    for idx, testCase := range tests {
+        testName := fmt.Sprintf("%d: %v, %v", idx, testCase.input, testCase.output)
+        t.Run(testName, func(t *testing.T) {
+            result := testCase.input.IdentifyFunctionsByName(testCase.inputString)
+            for idx, out := range result {
+                if out.Def.Name != result[idx].Def.Name {
+                    t.Errorf("got %v, want %v", out, result[idx])
+                }
+            }
+        })
+    }
+
+}
