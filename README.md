@@ -1,5 +1,9 @@
 # Grafana Data Source Backend Plugin for Epics Archiver
 
+| Build: | Status: | 
+| :---: | :---: | 
+| Latest release | ![alt_text](https://github.com/n-wbrown/archiver-datasource-backend/workflows/publish-release.yml/badge.svg) |
+| Master Branch | ![alt_text](https://github.com/n-wbrown/archiver-datasource-backend/workflows/build-and-test.yml/badge.svg?branch=master)
 
 ## Getting started
 
