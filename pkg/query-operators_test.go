@@ -37,6 +37,11 @@ func TestIdentifyFunctionsByName(t *testing.T) {
             inputString: "binInterval",
             output: []FunctionDescriptorQueryModel{{Def: FuncDefQueryModel{Name: "binInterval"}}},
         },
+        {
+            input: ArchiverQueryModel{Functions: []FunctionDescriptorQueryModel{{Def: FuncDefQueryModel{Name: "binInterval"}}}},
+            inputString: "binInterval-fake",
+            output: []FunctionDescriptorQueryModel{},
+        },
     }
     for idx, testCase := range tests {
         testName := fmt.Sprintf("%d: %v, %v", idx, testCase.input, testCase.output)
