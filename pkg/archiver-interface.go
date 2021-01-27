@@ -90,7 +90,7 @@ func (td *ArchiverDatasource) query(ctx context.Context, query backend.DataQuery
     if response.Error != nil {
         return response
     }
-    log.DefaultLogger.Debug("query.JSON unmarshalled", "qm", qm)
+    // log.DefaultLogger.Debug("query.JSON unmarshalled", "qm", qm)
     // log.DefaultLogger.Debug("qm.Target", "qm.Target", qm.Target)
 
 
@@ -111,11 +111,6 @@ func (td *ArchiverDatasource) query(ctx context.Context, query backend.DataQuery
 
     // data from original request's PluginContext
     // log.DefaultLogger.Debug("pluginctx.DataSourceInstanceSettings.URL", "value",    pluginctx.DataSourceInstanceSettings.URL)
-
-    // Log a warning if 'Format' is empty
-    if qm.Format == "" {
-        log.DefaultLogger.Warn("format is empty. defaulting to time series")
-    }
 
     // make the query and compile the results into a SingleData instance
     responseData := make([]SingleData, 0)

@@ -41,8 +41,8 @@ type archiverQueryModel struct {
 func BuildQueryUrl(target string, query backend.DataQuery, pluginctx backend.PluginContext, qm archiverQueryModel) string {
     // Build the URL to query the archiver built from Grafana's configuration
     // Set some constants
-    TIME_FORMAT := "2006-01-02T15:04:05.000-07:00"
-    JSON_DATA_URL := "data/getData.qw"
+    const TIME_FORMAT = "2006-01-02T15:04:05.000-07:00"
+    const JSON_DATA_URL = "data/getData.qw"
 
     // Unpack the configured URL for the datasource and use that as the base for assembling the query URL
     u, err := url.Parse(pluginctx.DataSourceInstanceSettings.URL)
@@ -180,8 +180,8 @@ func ArchiverSingleQueryParser(jsonAsBytes []byte) (SingleData, error){
 
 func BuildRegexUrl(regex string, pluginctx backend.PluginContext) string {
     // Construct the request URL for the regex search of PVs and return it as a string
-    REGEX_URL := "bpl/getMatchingPVs"
-    REGEX_MAXIMUM_MATCHES := 1000
+    const REGEX_URL = "bpl/getMatchingPVs"
+    const REGEX_MAXIMUM_MATCHES = 1000
 
     // Unpack the configured URL for the datasource and use that as the base for assembling the query URL
     u, err := url.Parse(pluginctx.DataSourceInstanceSettings.URL)
