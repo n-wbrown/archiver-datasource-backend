@@ -42,33 +42,40 @@ func TestBuildQueryUrl(t *testing.T) {
             target: "MR1K1:BEND:PIP:1:PMON",
             query: backend.DataQuery{
                 Interval: MultiReturnHelperParseDuration(time.ParseDuration("0s")),
-                JSON: json.RawMessage(`
-                    "alias": 
-                    "aliasPattern": 
-                    "constant":6.5 
+                JSON: json.RawMessage(`{
+                    "alias": null,
+                    "aliasPattern": null,
+                    "constant":6.5, 
                     "functions":[
                         {
                             "def":{
-                                "category":"Options"
-                                "defaultParams":[900] 
-                                "name":"binInterval" 
+                                "category":"Options",
+                                "defaultParams":[900], 
+                                "name":"binInterval",
                                 "params":[
                                     {
-                                        "name":"interval"
-                                        "type":"int"}]} 
-                            "params":[900]} 
+                                        "name":"interval",
+                                        "type":"int"
+                                    }
+                                ]
+                            }, 
+                            "params":[900]
+                            }, 
                         {
                             "def":{
-                                "category":"Transform"
-                                "defaultParams":[]
-                                "name":"delta"
-                                "params":[]}
-                            "params":[]}] 
-                    "hide":false 
-                    "operator": 
-                    "refId":"A" 
-                    "regex":true 
-                    "target":"MR1K[1,3]:BEND:PIP:1:PMON"`),
+                                "category":"Transform",
+                                "defaultParams":[],
+                                "name":"delta",
+                                "params":[]
+                            },
+                            "params":[]
+                        }
+                    ], 
+                    "hide":false ,
+                    "operator": null,
+                    "refId":"A" ,
+                    "regex":true ,
+                    "target":"MR1K[1,3]:BEND:PIP:1:PMON"}`),
                 MaxDataPoints:0,
                 QueryType: "",
                 RefID:"A",
@@ -120,10 +127,28 @@ func TestBuildQueryUrl(t *testing.T) {
                 // String: nil, 
                 Target: "MR1K[1,3]:BEND:PIP:1:PMON",
             },
-            output: "",
+            output: "http://localhost:3396/retrieval/data/getData.qw?donotchunk=&from=2021-01-27T14%3A25%3A41.678-08%3A00&pv=MR1K1%3ABEND%3APIP%3A1%3APMON&to=2021-01-27T14%3A30%3A41.678-08%3A00",
         },
     }
-    fmt.Println(tests)
+    // fmt.Println(tests)
+    for idx, testCase := range tests {
+        testName := fmt.Sprintf("%d: %v", idx, testCase.output)
+        t.Run(testName, func(t *testing.T) {
+            result := BuildQueryUrl(testCase.target, testCase.query, testCase.pluginctx, testCase.qm)
+            // if len(result) != len(testCase.output) {
+            //     t.Fatalf("Lengths differ - Wanted: %v Got: %v", testCase.output, result)
+            // }
+            // for idx, _ := range(testCase.output) {
+            //     if testCase.output[idx] != result[idx] {
+            //         t.Errorf("got %v, want %v", result, testCase.output)
+            //     }
+            // }
+            if testCase.output != result {
+                t.Errorf("got %v, want %v", result, testCase.output)
+            }
+        })
+    }
+    
 }
 
 func TestArchiverSingleQuery(t *testing.T) {
