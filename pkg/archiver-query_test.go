@@ -46,31 +46,7 @@ func TestBuildQueryUrl(t *testing.T) {
                     "alias": null,
                     "aliasPattern": null,
                     "constant":6.5, 
-                    "functions":[
-                        {
-                            "def":{
-                                "category":"Options",
-                                "defaultParams":[900], 
-                                "name":"binInterval",
-                                "params":[
-                                    {
-                                        "name":"interval",
-                                        "type":"int"
-                                    }
-                                ]
-                            }, 
-                            "params":[900]
-                            }, 
-                        {
-                            "def":{
-                                "category":"Transform",
-                                "defaultParams":[],
-                                "name":"delta",
-                                "params":[]
-                            },
-                            "params":[]
-                        }
-                    ], 
+                    "functions":[], 
                     "hide":false ,
                     "operator": null,
                     "refId":"A" ,
@@ -94,36 +70,13 @@ func TestBuildQueryUrl(t *testing.T) {
                 // dataTopic: nil,
                 // datasource: nil,
                 // format: ,
-                Functions: []FunctionDescriptorQueryModel{
-                        {
-                            Def: FuncDefQueryModel{
-                                // Fake:<nil> 
-                                Category: "Options", 
-                                DefaultParams: InitRawMsg(`[900]`), 
-                                Name: "binInterval", 
-                                Params:[]FuncDefParamQueryModel{
-                                    {Name:"interval", Type: "int"},
-                                },
-                            },
-                            Params: []string{"[900]",},
-                        }, 
-                        {
-                            Def: FuncDefQueryModel{
-                                // Fake:<nil>
-                                Category: "Transform",
-                                DefaultParams: InitRawMsg(`[]`),
-                                Name: "delta",
-                                Params:[]FuncDefParamQueryModel{},
-                            },
-                            Params: []string{},
-                        },
-                }, 
+                Functions: []FunctionDescriptorQueryModel{},
                 // Hide: false,
                 Operator: "",
                 QueryText: "",
-                QueryType: nil, 
+                QueryType: nil,
                 RefId: "A",
-                Regex: true, 
+                Regex: true,
                 // String: nil, 
                 Target: "MR1K[1,3]:BEND:PIP:1:PMON",
             },
