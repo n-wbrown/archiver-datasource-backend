@@ -124,7 +124,7 @@ func TestBuildQueryUrl(t *testing.T) {
                 QueryType: "",
                 RefID:"A",
                 TimeRange: backend.TimeRange{
-                    From: MultiReturnHelperParse(time.Parse(TIME_FORMAT, "2021-01-27T14:25:41.678-08:00")), 
+                    From: MultiReturnHelperParse(time.Parse(TIME_FORMAT, "2021-01-27T14:25:41.678-08:00")),
                     To: MultiReturnHelperParse(time.Parse(TIME_FORMAT, "2021-01-27T14:30:41.678-08:00")),
                 },
             },
@@ -142,15 +142,15 @@ func TestBuildQueryUrl(t *testing.T) {
                         {
                             Def: FuncDefQueryModel{
                                 // Fake:<nil> 
-                                Category: "Options", 
-                                DefaultParams: InitRawMsg(`[900]`), 
-                                Name: "binInterval", 
+                                Category: "Options",
+                                DefaultParams: InitRawMsg(`[900]`),
+                                Name: "binInterval",
                                 Params:[]FuncDefParamQueryModel{
                                     {Name:"interval", Type: "int"},
                                 },
                             },
                             Params: []string{"[900]",},
-                        }, 
+                        },
                         {
                             Def: FuncDefQueryModel{
                                 // Fake:<nil>
@@ -161,17 +161,17 @@ func TestBuildQueryUrl(t *testing.T) {
                             },
                             Params: []string{},
                         },
-                }, 
+                },
                 // Hide: false,
                 Operator: "",
                 QueryText: "",
-                QueryType: nil, 
+                QueryType: nil,
                 RefId: "A",
-                Regex: true, 
+                Regex: true,
                 // String: nil, 
                 Target: "MR1K[1,3]:BEND:PIP:1:PMON",
             },
-            output: "http://localhost:3396/retrieval/data/getData.qw?donotchunk=&from=2021-01-27T14%3A25%3A41.678-08%3A00&pv=MR1K1%3ABEND%3APIP%3A1%3APMON&to=2021-01-27T14%3A30%3A41.678-08%3A00",
+            output: "broken",
         },
     }
     // fmt.Println(tests)
@@ -179,20 +179,11 @@ func TestBuildQueryUrl(t *testing.T) {
         testName := fmt.Sprintf("%d: %v", idx, testCase.output)
         t.Run(testName, func(t *testing.T) {
             result := BuildQueryUrl(testCase.target, testCase.query, testCase.pluginctx, testCase.qm)
-            // if len(result) != len(testCase.output) {
-            //     t.Fatalf("Lengths differ - Wanted: %v Got: %v", testCase.output, result)
-            // }
-            // for idx, _ := range(testCase.output) {
-            //     if testCase.output[idx] != result[idx] {
-            //         t.Errorf("got %v, want %v", result, testCase.output)
-            //     }
-            // }
             if testCase.output != result {
                 t.Errorf("got %v, want %v", result, testCase.output)
             }
         })
     }
-    
 }
 
 func TestArchiverSingleQuery(t *testing.T) {
