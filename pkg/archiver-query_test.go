@@ -129,6 +129,97 @@ func TestBuildQueryUrl(t *testing.T) {
             },
             output: "http://localhost:3396/retrieval/data/getData.qw?donotchunk=&from=2021-01-27T14%3A25%3A41.678-08%3A00&pv=MR1K1%3ABEND%3APIP%3A1%3APMON&to=2021-01-27T14%3A30%3A41.678-08%3A00",
         },
+        {
+            target: "MR1K1:BEND:PIP:1:PMON",
+            query: backend.DataQuery{
+                Interval: MultiReturnHelperParseDuration(time.ParseDuration("0s")),
+                JSON: json.RawMessage(`{
+                    "alias": null,
+                    "aliasPattern": null,
+                    "constant":6.5, 
+                    "functions":[
+                        {
+                            "def":{
+                                "category":"Options",
+                                "defaultParams":[900], 
+                                "name":"binInterval",
+                                "params":[
+                                    {
+                                        "name":"interval",
+                                        "type":"int"
+                                    }
+                                ]
+                            }, 
+                            "params":[900]
+                            }, 
+                        {
+                            "def":{
+                                "category":"Transform",
+                                "defaultParams":[],
+                                "name":"delta",
+                                "params":[]
+                            },
+                            "params":[]
+                        }
+                    ], 
+                    "hide":false ,
+                    "operator": null,
+                    "refId":"A" ,
+                    "regex":true ,
+                    "target":"MR1K[1,3]:BEND:PIP:1:PMON"}`),
+                MaxDataPoints:0,
+                QueryType: "",
+                RefID:"A",
+                TimeRange: backend.TimeRange{
+                    From: MultiReturnHelperParse(time.Parse(TIME_FORMAT, "2021-01-27T14:25:41.678-08:00")), 
+                    To: MultiReturnHelperParse(time.Parse(TIME_FORMAT, "2021-01-27T14:30:41.678-08:00")),
+                },
+            },
+            pluginctx: backend.PluginContext{
+                 DataSourceInstanceSettings: &backend.DataSourceInstanceSettings{URL: "http://localhost:3396/retrieval",},
+            },
+            qm: ArchiverQueryModel{
+                // alias: ,
+                // aliasPattern: ,
+                // constant: 6.5,
+                // dataTopic: nil,
+                // datasource: nil,
+                // format: ,
+                Functions: []FunctionDescriptorQueryModel{
+                        {
+                            Def: FuncDefQueryModel{
+                                // Fake:<nil> 
+                                Category: "Options", 
+                                DefaultParams: InitRawMsg(`[900]`), 
+                                Name: "binInterval", 
+                                Params:[]FuncDefParamQueryModel{
+                                    {Name:"interval", Type: "int"},
+                                },
+                            },
+                            Params: []string{"[900]",},
+                        }, 
+                        {
+                            Def: FuncDefQueryModel{
+                                // Fake:<nil>
+                                Category: "Transform",
+                                DefaultParams: InitRawMsg(`[]`),
+                                Name: "delta",
+                                Params:[]FuncDefParamQueryModel{},
+                            },
+                            Params: []string{},
+                        },
+                }, 
+                // Hide: false,
+                Operator: "",
+                QueryText: "",
+                QueryType: nil, 
+                RefId: "A",
+                Regex: true, 
+                // String: nil, 
+                Target: "MR1K[1,3]:BEND:PIP:1:PMON",
+            },
+            output: "http://localhost:3396/retrieval/data/getData.qw?donotchunk=&from=2021-01-27T14%3A25%3A41.678-08%3A00&pv=MR1K1%3ABEND%3APIP%3A1%3APMON&to=2021-01-27T14%3A30%3A41.678-08%3A00",
+        },
     }
     // fmt.Println(tests)
     for idx, testCase := range tests {
