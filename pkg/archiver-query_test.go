@@ -1,14 +1,129 @@
 package main
 
 import (
+    "encoding/json"
     "fmt"
     "math"
+    "time"
     "io/ioutil"
     "testing"
+    "github.com/grafana/grafana-plugin-sdk-go/backend"
 )
 
+func MultiReturnHelperParseDuration(result time.Duration, err error) time.Duration {
+    return result
+}
+
+func MultiReturnHelperParse(result time.Time, err error) time.Time {
+    return result
+}
+
+func InitString(value string) *string{
+    new_string := value
+    return &new_string
+}
+
+func InitRawMsg(value string) *json.RawMessage{
+    new_msg := json.RawMessage(value)
+    return &new_msg
+}
+
 func TestBuildQueryUrl(t *testing.T) {
-    t.Skipf("Test not implemented")
+    //            "2021-01-27T14:25:41.678-08:00"
+    TIME_FORMAT := "2006-01-02T15:04:05.000-07:00"
+    var tests = []struct {
+        target string
+        query backend.DataQuery
+        pluginctx backend.PluginContext
+        qm ArchiverQueryModel
+        output string
+    }{
+        {
+            target: "MR1K1:BEND:PIP:1:PMON",
+            query: backend.DataQuery{
+                Interval: MultiReturnHelperParseDuration(time.ParseDuration("0s")),
+                JSON: json.RawMessage(`
+                    "alias": 
+                    "aliasPattern": 
+                    "constant":6.5 
+                    "functions":[
+                        {
+                            "def":{
+                                "category":"Options"
+                                "defaultParams":[900] 
+                                "name":"binInterval" 
+                                "params":[
+                                    {
+                                        "name":"interval"
+                                        "type":"int"}]} 
+                            "params":[900]} 
+                        {
+                            "def":{
+                                "category":"Transform"
+                                "defaultParams":[]
+                                "name":"delta"
+                                "params":[]}
+                            "params":[]}] 
+                    "hide":false 
+                    "operator": 
+                    "refId":"A" 
+                    "regex":true 
+                    "target":"MR1K[1,3]:BEND:PIP:1:PMON"`),
+                MaxDataPoints:0,
+                QueryType: "",
+                RefID:"A",
+                TimeRange: backend.TimeRange{
+                    From: MultiReturnHelperParse(time.Parse(TIME_FORMAT, "2021-01-27T14:25:41.678-08:00")), 
+                    To: MultiReturnHelperParse(time.Parse(TIME_FORMAT, "2021-01-27T14:30:41.678-08:00")),
+                },
+            },
+            pluginctx: backend.PluginContext{
+                 DataSourceInstanceSettings: &backend.DataSourceInstanceSettings{URL: "http://localhost:3396/retrieval",},
+            },
+            qm: ArchiverQueryModel{
+                // alias: ,
+                // aliasPattern: ,
+                // constant: 6.5,
+                // dataTopic: nil,
+                // datasource: nil,
+                // format: ,
+                Functions: []FunctionDescriptorQueryModel{
+                        {
+                            Def: FuncDefQueryModel{
+                                // Fake:<nil> 
+                                Category: "Options", 
+                                DefaultParams: InitRawMsg(`[900]`), 
+                                Name: "binInterval", 
+                                Params:[]FuncDefParamQueryModel{
+                                    {Name:"interval", Type: "int"},
+                                },
+                            },
+                            Params: []string{"[900]",},
+                        }, 
+                        {
+                            Def: FuncDefQueryModel{
+                                // Fake:<nil>
+                                Category: "Transform",
+                                DefaultParams: InitRawMsg(`[]`),
+                                Name: "delta",
+                                Params:[]FuncDefParamQueryModel{},
+                            },
+                            Params: []string{},
+                        },
+                }, 
+                // Hide: false,
+                Operator: "",
+                QueryText: "",
+                QueryType: nil, 
+                RefId: "A",
+                Regex: true, 
+                // String: nil, 
+                Target: "MR1K[1,3]:BEND:PIP:1:PMON",
+            },
+            output: "",
+        },
+    }
+    fmt.Println(tests)
 }
 
 func TestArchiverSingleQuery(t *testing.T) {
