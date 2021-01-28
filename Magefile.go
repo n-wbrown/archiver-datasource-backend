@@ -7,6 +7,7 @@ import (
 	// mage:import
 	build "github.com/grafana/grafana-plugin-sdk-go/build"
 	"github.com/magefile/mage/sh"
+    "context"
 )
 
 // Hello prints a message (shows that you can define custom Mage targets).
@@ -21,6 +22,15 @@ func Vtest() error {
 	}
 	return nil
 }
+
+// atest() runs go test for a specific test with the verbose flag enabled
+func Atest(ctx context.Context, targetTest string) error {
+	if err := sh.RunV("go", "test", "-v", "./pkg/...", "-run", targetTest); err != nil {
+		return err
+	}
+	return nil
+}
+
 
 // Default configures the default target.
 var Default = build.BuildAll
