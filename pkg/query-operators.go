@@ -1,5 +1,11 @@
 package main
 
+import (
+    "errors"
+    "fmt"
+	"github.com/grafana/grafana-plugin-sdk-go/backend/log"
+)
+
 func OperatorValidator(input string) bool {
     // return true if the operator given by the user is a valid, recognized operator
 
@@ -46,6 +52,22 @@ func (qm ArchiverQueryModel) IdentifyFunctionsByName(targetName string) []Functi
     return response
 }
 
-// func CreateOperatorQuery(qm ArchiverQueryModel) string {
-// }
+func CreateOperatorQuery(qm ArchiverQueryModel) (string, error) {
+    // Create the Prefix in the query to specify the operator
 
+    // Skip any unrecognized operators 
+    if ! OperatorValidator(qm.Operator) {
+        errMsg := fmt.Sprintf("%v is not a recognized operator", qm.Operator)
+        log.DefaultLogger.Debug("Error parsing query", "message", errMsg)
+        return "", errors.New(errMsg)
+    }
+
+    // No operators are necessary in this case
+    if qm.Operator == "" || qm.Operator == "raw" {
+        return "", nil
+    }
+
+    qm.IdentifyFunctionsByName("binInterval")
+    return "", nil
+
+}

@@ -54,5 +54,43 @@ func TestIdentifyFunctionsByName(t *testing.T) {
             }
         })
     }
+}
 
+func TestCreateOperatorQuery(t *testing.T) {
+    var tests = []struct{
+        input ArchiverQueryModel
+        output string
+    }{
+        {
+            input: ArchiverQueryModel{
+                Functions: []FunctionDescriptorQueryModel{
+                    {
+                        Def: FuncDefQueryModel{
+                            Category: "Options",
+                            DefaultParams: InitRawMsg(`[16]`),
+                            Name: "binInterval",
+                            Params:[]FuncDefParamQueryModel{
+                                {Name:"interval", Type: "int"},
+                            },
+                        },
+                        Params: []string{"[16]",},
+                    },
+                },
+                Operator: "mean",
+            },
+            output: "mean_16",
+        },
+    }
+    for idx, testCase := range tests {
+        testName := fmt.Sprintf("%d: %v, %v", idx, testCase.input, testCase.output)
+        t.Run(testName, func(t *testing.T) {
+            result, err := CreateOperatorQuery(testCase.input)
+            if err != nil {
+                t.Errorf("Error received %v", err)
+            }
+            if testCase.output != result {
+                t.Errorf("got %v, want %v", result, testCase.output)
+            }
+        })
+    }
 }
