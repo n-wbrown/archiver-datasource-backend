@@ -116,7 +116,7 @@ func TestBuildQueryUrl(t *testing.T) {
                         }
                     ], 
                     "hide":false ,
-                    "operator": null,
+                    "operator": "median",
                     "refId":"A" ,
                     "regex":true ,
                     "target":"MR1K[1,3]:BEND:PIP:1:PMON"}`),
@@ -163,7 +163,7 @@ func TestBuildQueryUrl(t *testing.T) {
                         },
                 },
                 // Hide: false,
-                Operator: "",
+                Operator: "median",
                 QueryText: "",
                 QueryType: nil,
                 RefId: "A",
