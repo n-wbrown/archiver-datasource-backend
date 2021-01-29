@@ -72,10 +72,10 @@ func BuildQueryUrl(target string, query backend.DataQuery, pluginctx backend.Plu
     // Build the URL to query the archiver built from Grafana's configuration
     // Set some constants
 
-    log.DefaultLogger.Debug("target", "target", target)
-    log.DefaultLogger.Debug("query", "query", query)
-    log.DefaultLogger.Debug("pluginctx", "pluginctx", pluginctx)
-    log.DefaultLogger.Debug("qm", "qm", qm)
+    // log.DefaultLogger.Debug("target", "target", target)
+    // log.DefaultLogger.Debug("query", "query", query)
+    // log.DefaultLogger.Debug("pluginctx", "pluginctx", pluginctx)
+    // log.DefaultLogger.Debug("qm", "qm", qm)
 
     const TIME_FORMAT = "2006-01-02T15:04:05.000-07:00"
     const JSON_DATA_URL = "data/getData.qw"
@@ -88,7 +88,7 @@ func BuildQueryUrl(target string, query backend.DataQuery, pluginctx backend.Plu
 
     // apply an operator to the PV string if one (not "raw" or "last") is provided
     opQuery, opErr := CreateOperatorQuery(qm)
-    if opErr == nil {
+    if opErr != nil {
         log.DefaultLogger.Warn("Operator has not been properly created")
     }
 
