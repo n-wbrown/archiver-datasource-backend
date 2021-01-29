@@ -104,6 +104,25 @@ func TestCreateOperatorQuery(t *testing.T) {
             },
             output: "mean_16",
         },
+        {
+            input: ArchiverQueryModel{
+                Functions: []FunctionDescriptorQueryModel{
+                    {
+                        Def: FuncDefQueryModel{
+                            Category: "Options",
+                            DefaultParams: InitRawMsg(`[16]`),
+                            Name: "binInterval",
+                            Params:[]FuncDefParamQueryModel{
+                                {Name:"interval", Type: "int"},
+                            },
+                        },
+                        Params: []string{"[16]",},
+                    },
+                },
+                Operator: "raw",
+            },
+            output: "",
+        },
     }
     for idx, testCase := range tests {
         testName := fmt.Sprintf("%d: %v, %v", idx, testCase.input, testCase.output)
