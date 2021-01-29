@@ -1,7 +1,9 @@
 package main
 
 import (
-	"github.com/grafana/grafana-plugin-sdk-go/backend/log"
+    "errors"
+    "fmt"
+	//"github.com/grafana/grafana-plugin-sdk-go/backend/log"
 )
 
 func (qm ArchiverQueryModel) IdentifyFunctionsByName(targetName string) []FunctionDescriptorQueryModel {
@@ -16,6 +18,17 @@ func (qm ArchiverQueryModel) IdentifyFunctionsByName(targetName string) []Functi
 }
 
 func (fdqm FunctionDescriptorQueryModel) GetParametersByName (target string) (string, error) {
-    log.DefaultLogger.Debug("Running")
-    return "", nil
+    // Provide the argument value for the function given its name.
+    //  If multiple are received, only return the first. This should never happen. 
+    if len(fdqm.Params) < len(fdqm.Def.Params) {
+        errMsgLen := fmt.Sprintf("List of arguments exceeded the number of arguments provided (got %v wanted %v)", len(fdqm.Params), len(fdqm.Def.Params))
+        return "", errors.New(errMsgLen)
+    }
+    for idx, def := range fdqm.Def.Params {
+        if def.Name == target {
+            return fdqm.Params[idx], nil
+        }
+    }
+    errMsg := fmt.Sprintf("Not able to identify argument %v in function %v", target, fdqm.Def.Name)
+    return "", errors.New(errMsg)
 }

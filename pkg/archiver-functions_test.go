@@ -151,8 +151,11 @@ func TestGetParametersByName(t *testing.T) {
         t.Run(testName, func(t *testing.T) {
             result, err := testCase.input.GetParametersByName(testCase.targetArg)
             if testCase.output == nil {
-                if err == nil  {
+                if err == nil {
                     t.Errorf("An error was expected but not received. Bad output: %v", result)
+                }
+                if result != "" {
+                    t.Errorf("Expected output was \"\" but something else was received. Bad output: %v", result)
                 }
             } else {
                 if err != nil {
