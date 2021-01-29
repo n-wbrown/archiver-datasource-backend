@@ -3,7 +3,6 @@ package main
 import (
     "fmt"
     "testing"
-    "github.com/grafana/grafana-plugin-sdk-go/backend/log"
 )
 
 func TestIdentifyFunctionsByName(t *testing.T) {
@@ -146,5 +145,23 @@ func TestGetParametersByName(t *testing.T) {
             output: nil,
 		},
     }
-    log.DefaultLogger.Debug("tests", "tests", tests)
+
+    for tdx, testCase := range tests {
+        testName := fmt.Sprintf("case %d: %v", tdx, testCase.output)
+        t.Run(testName, func(t *testing.T) {
+            result, err := testCase.input.GetParametersByName(testCase.targetArg)
+            if testCase.output == nil {
+                if err == nil  {
+                    t.Errorf("An error was expected but not received. Bad output: %v", result)
+                }
+            } else {
+                if err != nil {
+                    t.Errorf("An error was received but not expected. Bad output: %v", result)
+                }
+                if result != *testCase.output {
+                    t.Errorf("Incorrect result: got %v, want %v", result, *testCase.output)
+                }
+            }
+        })
+    }
  }

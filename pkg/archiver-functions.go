@@ -15,7 +15,7 @@ func (qm ArchiverQueryModel) IdentifyFunctionsByName(targetName string) []Functi
     return response
 }
 
-func (fdqm FunctionDescriptorQueryModel) GetParametersByName (target string) string {
+func (fdqm FunctionDescriptorQueryModel) GetParametersByName (target string) (string, error) {
     log.DefaultLogger.Debug("Running")
-    return ""
+    return "", nil
 }
