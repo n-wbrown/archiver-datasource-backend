@@ -1,8 +1,12 @@
 package main
 
 import (
+    "encoding/json"
     "errors"
     "fmt"
+    "strings"
+    "strconv"
+
 	"github.com/grafana/grafana-plugin-sdk-go/backend/log"
 )
 
@@ -43,7 +47,7 @@ func OperatorValidator(input string) bool {
 
 func (qm ArchiverQueryModel) IdentifyFunctionsByName(targetName string) []FunctionDescriptorQueryModel {
     // create a slice of the the FunctionDescrporQueryModels that have the type of name targetName in order
-    response := make([]FunctionDescriptorQueryModel, 1, 1) 
+    response := make([]FunctionDescriptorQueryModel, 0, 0) 
     for _, entry := range qm.Functions {
         if entry.Def.Name == targetName {
             response = append(response, entry)
@@ -53,7 +57,8 @@ func (qm ArchiverQueryModel) IdentifyFunctionsByName(targetName string) []Functi
 }
 
 func CreateOperatorQuery(qm ArchiverQueryModel) (string, error) {
-    // Create the Prefix in the query to specify the operator
+    // Create the Prefix in the query to specify the operator seeking the binInterval option if necessary
+    // See Datasource.ts buildURL for the matching .ts implementation
 
     // Skip any unrecognized operators 
     if ! OperatorValidator(qm.Operator) {
@@ -63,11 +68,35 @@ func CreateOperatorQuery(qm ArchiverQueryModel) (string, error) {
     }
 
     // No operators are necessary in this case
-    if qm.Operator == "" || qm.Operator == "raw" {
+    if qm.Operator == "" || qm.Operator == "raw" || qm.Operator == "last" {
         return "", nil
     }
 
-    qm.IdentifyFunctionsByName("binInterval")
-    return "", nil
+    var binInterval *int
+    binInterval = nil
+    intervals := qm.IdentifyFunctionsByName("binInterval")
+    if len(intervals) >= 1 {
+        if len(intervals) > 1 {
+            log.DefaultLogger.Warn(fmt.Sprintf("more than one binInterval has been provided: %v", intervals))
+        }
+        var parsedValues []int
+        source := (*json.RawMessage)(intervals[0].Def.DefaultParams)
+        jsonErr := json.Unmarshal(*source, &parsedValues)
+        if jsonErr != nil {
+            log.DefaultLogger.Warn("Conversion of binInterval argument has failed", "Error", jsonErr)
+            return "", jsonErr
+        }
+        binInterval = new(int)
+        *binInterval = parsedValues[0]
+    } else if len(intervals) == 0 {
+        // use a default value of 1
+        binInterval = new(int)
+        *binInterval = 1
+    }
+    var opBuilder strings.Builder
+    opBuilder.WriteString(qm.Operator)
+    opBuilder.WriteString("_")
+    opBuilder.WriteString(strconv.Itoa(*binInterval))
 
+    return opBuilder.String(), nil
 }
