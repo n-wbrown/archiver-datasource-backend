@@ -45,17 +45,6 @@ func OperatorValidator(input string) bool {
     return false
 }
 
-func (qm ArchiverQueryModel) IdentifyFunctionsByName(targetName string) []FunctionDescriptorQueryModel {
-    // create a slice of the the FunctionDescrporQueryModels that have the type of name targetName in order
-    response := make([]FunctionDescriptorQueryModel, 0, 0) 
-    for _, entry := range qm.Functions {
-        if entry.Def.Name == targetName {
-            response = append(response, entry)
-        }
-    }
-    return response
-}
-
 func CreateOperatorQuery(qm ArchiverQueryModel) (string, error) {
     // Create the Prefix in the query to specify the operator seeking the binInterval option if necessary
     // See Datasource.ts buildURL for the matching .ts implementation
