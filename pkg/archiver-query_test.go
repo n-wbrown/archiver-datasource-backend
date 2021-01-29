@@ -10,24 +10,6 @@ import (
     "github.com/grafana/grafana-plugin-sdk-go/backend"
 )
 
-func MultiReturnHelperParseDuration(result time.Duration, err error) time.Duration {
-    return result
-}
-
-func MultiReturnHelperParse(result time.Time, err error) time.Time {
-    return result
-}
-
-func InitString(value string) *string{
-    new_string := value
-    return &new_string
-}
-
-func InitRawMsg(value string) *json.RawMessage{
-    new_msg := json.RawMessage(value)
-    return &new_msg
-}
-
 func TestBuildQueryUrl(t *testing.T) {
     //            "2021-01-27T14:25:41.678-08:00"
     TIME_FORMAT := "2006-01-02T15:04:05.000-07:00"
