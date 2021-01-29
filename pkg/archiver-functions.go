@@ -1,5 +1,9 @@
 package main
 
+import (
+	"github.com/grafana/grafana-plugin-sdk-go/backend/log"
+)
+
 func (qm ArchiverQueryModel) IdentifyFunctionsByName(targetName string) []FunctionDescriptorQueryModel {
     // create a slice of the the FunctionDescrporQueryModels that have the type of name targetName in order
     response := make([]FunctionDescriptorQueryModel, 0, 0) 
@@ -9,4 +13,9 @@ func (qm ArchiverQueryModel) IdentifyFunctionsByName(targetName string) []Functi
         }
     }
     return response
+}
+
+func (fdqm FunctionDescriptorQueryModel) GetParametersByName (target string) string {
+    log.DefaultLogger.Debug("Running")
+    return ""
 }
