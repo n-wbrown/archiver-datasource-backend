@@ -86,14 +86,24 @@ func BuildQueryUrl(target string, query backend.DataQuery, pluginctx backend.Plu
         log.DefaultLogger.Warn("err", "err", err)
     }
 
-    // optionally apply operators if if noe (not "raw") is provided
-    /*
-    useOperator := false
-    var operator string
-    if !(qm.Operator == "" || qm.Operator == "raw") {
-        if OperatorValidator(qm.Operator)
+    // apply an operator to the PV string if one (not "raw" or "last") is provided
+    opQuery, opErr := CreateOperatorQuery(qm)
+    if opErr == nil {
+        log.DefaultLogger.Warn("Operator has not been properly created")
     }
-    */
+
+    var targetPv string
+    if len(opQuery) > 0 {
+        var opBuilder strings.Builder
+        opBuilder.WriteString(opQuery)
+        opBuilder.WriteString("(")
+        opBuilder.WriteString(target)
+        opBuilder.WriteString(")")
+        targetPv = opBuilder.String()
+
+    } else {
+        targetPv = target
+    }
 
     // amend the incomplete path
     var pathBuilder strings.Builder
@@ -104,7 +114,7 @@ func BuildQueryUrl(target string, query backend.DataQuery, pluginctx backend.Plu
 
     // assemble the query of the URL and attach it to u
     query_vals :=  make(url.Values)
-    query_vals["pv"] = []string{target} 
+    query_vals["pv"] = []string{targetPv}
     query_vals["from"] = []string{query.TimeRange.From.Format(TIME_FORMAT)}
     query_vals["to"] = []string{query.TimeRange.To.Format(TIME_FORMAT)}
     query_vals["donotchunk"] = []string{""}

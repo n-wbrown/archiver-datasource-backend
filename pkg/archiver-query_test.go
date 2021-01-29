@@ -171,7 +171,7 @@ func TestBuildQueryUrl(t *testing.T) {
                 // String: nil, 
                 Target: "MR1K[1,3]:BEND:PIP:1:PMON",
             },
-            output: "broken",
+            output: "http://localhost:3396/retrieval/data/getData.qw?donotchunk=&from=2021-01-27T14%3A25%3A41.678-08%3A00&pv=median_900%28MR1K1%3ABEND%3APIP%3A1%3APMON%29&to=2021-01-27T14%3A30%3A41.678-08%3A00",
         },
     }
     // fmt.Println(tests)
