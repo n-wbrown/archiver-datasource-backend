@@ -1,7 +1,6 @@
 package main
 
 import (
-    "encoding/json"
     "errors"
     "fmt"
     "strings"
@@ -68,15 +67,18 @@ func CreateOperatorQuery(qm ArchiverQueryModel) (string, error) {
         if len(intervals) > 1 {
             log.DefaultLogger.Warn(fmt.Sprintf("more than one binInterval has been provided: %v", intervals))
         }
-        var parsedValues []int
-        source := (*json.RawMessage)(intervals[0].Def.DefaultParams)
-        jsonErr := json.Unmarshal(*source, &parsedValues)
-        if jsonErr != nil {
-            log.DefaultLogger.Warn("Conversion of binInterval argument has failed", "Error", jsonErr)
-            return "", jsonErr
+
+        val, paramErr := intervals[0].GetParametersByName("interval")
+        if paramErr != nil {
+            log.DefaultLogger.Warn("Conversion of binInterval argument has failed", "Error", paramErr)
+            return "", paramErr
         }
         binInterval = new(int)
-        *binInterval = parsedValues[0]
+        var atoiErr error
+        *binInterval, atoiErr = strconv.Atoi(val)
+        if atoiErr != nil { 
+            log.DefaultLogger.Warn("Failed to convert parameter string to integer", "Error", atoiErr)
+        }
     } else if len(intervals) == 0 {
         // use a default value of 1
         binInterval = new(int)

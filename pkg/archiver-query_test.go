@@ -131,7 +131,7 @@ func TestBuildQueryUrl(t *testing.T) {
                                     {Name:"interval", Type: "int"},
                                 },
                             },
-                            Params: []string{"[900]",},
+                            Params: []string{"900",},
                         },
                         {
                             Def: FuncDefQueryModel{
