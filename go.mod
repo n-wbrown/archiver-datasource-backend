@@ -1,4 +1,4 @@
-module github.com/grafana/simple-datasource-backend
+module github.com/n-wbrown/archiver-datasource-backend
 
 go 1.14
 

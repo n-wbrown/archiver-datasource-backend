@@ -3,6 +3,7 @@ package main
 import (
     "errors"
     "fmt"
+    "github.com/n-wbrown/archiver-datasource-backend/pkg/functions"
 	//"github.com/grafana/grafana-plugin-sdk-go/backend/log"
 )
 
@@ -32,3 +33,20 @@ func (fdqm FunctionDescriptorQueryModel) GetParametersByName (target string) (st
     errMsg := fmt.Sprintf("Not able to identify argument %v in function %v", target, fdqm.Def.Name)
     return "", errors.New(errMsg)
 }
+
+
+func ApplyFunctions(responseData []SingleData) []SingleData {
+    // iterate through the list of functions
+    functions.Sample("yo")
+    return responseData
+}
+/*
+//  Call this one FunctionSelector again? 
+func ApplyIndividualFunction(responseData []SingleData, fdqm FunctionDescriptorQueryModel) []SingleData{
+    // Based on the name (as a string) of the function, select the actual function to be used 
+}
+
+one little func for each function, function will contain it's own parameter extractor and appear of the form:
+func FunctionFunctionName(responseData []SingleData, fdqm FunctionDescriptorQueryModel) []SingleData {
+}
+*/

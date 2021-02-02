@@ -167,4 +167,15 @@ func TestGetParametersByName(t *testing.T) {
             }
         })
     }
- }
+}
+
+func TestApplyFunctions(t *testing.T) {
+    t.Skipf("Test not implemented")
+}
+
+func TestFunctionSelector(t *testing.T) {
+    t.Skipf("Test not implemented")
+}
+
+
+
