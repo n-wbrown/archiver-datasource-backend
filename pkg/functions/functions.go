@@ -12,7 +12,7 @@ func Sample(input string) bool {
 
 // Utilities 
 
-// Transform funcitons
+// Transform functions
 
 // Array to Scalar Functions
 

@@ -174,7 +174,58 @@ func TestApplyFunctions(t *testing.T) {
 }
 
 func TestFunctionSelector(t *testing.T) {
-    t.Skipf("Test not implemented")
+    var tests = []struct{
+        inputSd []SingleData
+        inputFdqm FunctionDescriptorQueryModel
+        output []SingleData
+    }{
+        {
+            inputSd: []SingleData{
+                {
+                    // Times: []time.Time{}
+                    Values: []float64{1,1,2,3,5,8},
+                },
+            },
+            inputFdqm: FunctionDescriptorQueryModel{
+                Def: FuncDefQueryModel{
+                    Category: "Transform",
+                    Name: "delta",
+                    Params: []FuncDefParamQueryModel{
+                        {
+                            Name: "delta",
+                        },
+                    },
+                },
+                Params: []string{"2"},
+            },
+            output: []SingleData{
+                {
+                    Values: []float64{3,3,4,5,7,10},
+                },
+            },
+
+        },
+    }
+
+    for tdx, testCase := range tests {
+        testName := fmt.Sprintf("case %d: %v", tdx, testCase.output)
+        t.Run(testName, func(t *testing.T) {
+            FunctionSelector(testCase.inputSd, testCase.inputFdqm)
+            if len(testCase.inputSd) != len(testCase.output) {
+                t.Errorf("Input and output SubgkeData  differ in length. Wanted %v, got %v", len(testCase.output), len(testCase.inputSd))
+            }
+            for udx, _ := range testCase.output {
+                if len(testCase.output[udx].Values) != len(testCase.inputSd[udx].Values) {
+                    t.Errorf("Input and output arrays differ in length. Wanted %v, got %v", len(testCase.output[udx].Values), len(testCase.inputSd[udx].Values))
+                }
+                for idx, _ := range(testCase.output[udx].Values) {
+                    if testCase.inputSd[udx].Values[idx] != testCase.output[udx].Values[idx] {
+                        t.Errorf("Values at index %v do not match, Wanted %v, got %v", idx, testCase.output[udx].Values[idx], testCase.inputSd[udx].Values[idx]) 
+                    }
+                }
+            }
+        })
+    }
 }
 
 

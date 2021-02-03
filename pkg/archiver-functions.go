@@ -3,8 +3,8 @@ package main
 import (
     "errors"
     "fmt"
-    "github.com/n-wbrown/archiver-datasource-backend/pkg/functions"
-	//"github.com/grafana/grafana-plugin-sdk-go/backend/log"
+    //"github.com/n-wbrown/archiver-datasource-backend/pkg/functions"
+	"github.com/grafana/grafana-plugin-sdk-go/backend/log"
 )
 
 func (qm ArchiverQueryModel) IdentifyFunctionsByName(targetName string) []FunctionDescriptorQueryModel {
@@ -34,19 +34,25 @@ func (fdqm FunctionDescriptorQueryModel) GetParametersByName (target string) (st
     return "", errors.New(errMsg)
 }
 
-
-func ApplyFunctions(responseData []SingleData) []SingleData {
+func ApplyFunctions(responseData []SingleData, qm ArchiverQueryModel) []SingleData {
     // iterate through the list of functions
     return responseData
 }
 
-func FunctionSelector(responseData []SingleData, fdqm FunctionDescriptorQueryModel) func(string)bool{
+func FunctionSelector(responseData []SingleData, fdqm FunctionDescriptorQueryModel) error{
     // Based on the name (as a string) of the function, select the actual function to be used
-    return functions.Sample
-}
+    // Note: This changes responseData inplace 
+    name := fdqm.Def.Name
+    // category := fdqm.Def.Category
 
-/*
-one little func for each function, function will contain it's own parameter extractor and appear of the form:
-func FunctionFunctionName(responseData []SingleData, fdqm FunctionDescriptorQueryModel) []SingleData {
+    switch name {
+        case "delta":
+            fmt.Println("hi")
+        default:
+            errMsg := fmt.Sprintf("Function %v is not a recognized function", name)
+            log.DefaultLogger.Warn(errMsg)
+            return errors.New(errMsg)
+    }
+    return nil
+
 }
-*/
