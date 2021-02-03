@@ -1,9 +1,11 @@
-package main
+package archiver
 
 import (
     "fmt"
     "testing"
 )
+
+// Tests
 
 func TestIdentifyFunctionsByName(t *testing.T) {
     var tests = []struct{
@@ -182,14 +184,14 @@ func TestFunctionSelector(t *testing.T) {
         {
             inputSd: []SingleData{
                 {
-                    // Times: []time.Time{}
+                    Times: TimeArrayHelper(0,6),
                     Values: []float64{1,1,2,3,5,8},
                 },
             },
             inputFdqm: FunctionDescriptorQueryModel{
                 Def: FuncDefQueryModel{
                     Category: "Transform",
-                    Name: "delta",
+                    Name: "offset",
                     Params: []FuncDefParamQueryModel{
                         {
                             Name: "delta",
@@ -200,6 +202,7 @@ func TestFunctionSelector(t *testing.T) {
             },
             output: []SingleData{
                 {
+                    Times: TimeArrayHelper(0,6),
                     Values: []float64{3,3,4,5,7,10},
                 },
             },
@@ -210,9 +213,12 @@ func TestFunctionSelector(t *testing.T) {
     for tdx, testCase := range tests {
         testName := fmt.Sprintf("case %d: %v", tdx, testCase.output)
         t.Run(testName, func(t *testing.T) {
-            FunctionSelector(testCase.inputSd, testCase.inputFdqm)
+            err := FunctionSelector(testCase.inputSd, testCase.inputFdqm)
+            if err != nil {
+                t.Errorf("An error has been generated")
+            }
             if len(testCase.inputSd) != len(testCase.output) {
-                t.Errorf("Input and output SubgkeData  differ in length. Wanted %v, got %v", len(testCase.output), len(testCase.inputSd))
+                t.Errorf("Input and output SingleData  differ in length. Wanted %v, got %v", len(testCase.output), len(testCase.inputSd))
             }
             for udx, _ := range testCase.output {
                 if len(testCase.output[udx].Values) != len(testCase.inputSd[udx].Values) {

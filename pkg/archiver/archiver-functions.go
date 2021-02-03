@@ -1,4 +1,4 @@
-package main
+package archiver
 
 import (
     "errors"
@@ -46,7 +46,7 @@ func FunctionSelector(responseData []SingleData, fdqm FunctionDescriptorQueryMod
     // category := fdqm.Def.Category
 
     switch name {
-        case "delta":
+        case "offset":
             fmt.Println("hi")
         default:
             errMsg := fmt.Sprintf("Function %v is not a recognized function", name)
@@ -54,5 +54,4 @@ func FunctionSelector(responseData []SingleData, fdqm FunctionDescriptorQueryMod
             return errors.New(errMsg)
     }
     return nil
-
 }
