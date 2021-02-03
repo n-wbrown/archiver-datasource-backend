@@ -3,7 +3,7 @@ package archiver
 import (
     "errors"
     "fmt"
-    //"github.com/n-wbrown/archiver-datasource-backend/pkg/functions"
+    "github.com/n-wbrown/archiver-datasource-backend/pkg/functions"
 	"github.com/grafana/grafana-plugin-sdk-go/backend/log"
 )
 
@@ -47,7 +47,7 @@ func FunctionSelector(responseData []SingleData, fdqm FunctionDescriptorQueryMod
 
     switch name {
         case "offset":
-            fmt.Println("hi")
+            responseData = functions.Offset(responseData, fdqm.GetParametersByName("delta"))
         default:
             errMsg := fmt.Sprintf("Function %v is not a recognized function", name)
             log.DefaultLogger.Warn(errMsg)

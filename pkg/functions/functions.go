@@ -15,7 +15,19 @@ func Sample(input string) bool {
 
 // Transform functions
 
-func Offset(data []SingleData, delta float64) []SingleData {
+func Offset(data []archiver.SingleData, delta float64) []archiver.SingleData {
+    newData := make([]archiver.SingleData, len(data))
+    for idx, d := range data {
+        newValues := make([]float64, len(data))
+        for idx, val := range d.Values {
+            newValues[idx] = d.Values + delta
+        }
+        newSd := archiver.SingleData{
+            Times: data[idx].Times,
+            Values: newValues,
+        }
+        newData[idx] = newSd
+    }
     return data
 }
 
