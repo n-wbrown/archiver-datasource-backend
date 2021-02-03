@@ -37,15 +37,15 @@ func (fdqm FunctionDescriptorQueryModel) GetParametersByName (target string) (st
 
 func ApplyFunctions(responseData []SingleData) []SingleData {
     // iterate through the list of functions
-    functions.Sample("yo")
     return responseData
 }
-/*
-//  Call this one FunctionSelector again? 
-func ApplyIndividualFunction(responseData []SingleData, fdqm FunctionDescriptorQueryModel) []SingleData{
-    // Based on the name (as a string) of the function, select the actual function to be used 
+
+func FunctionSelector(responseData []SingleData, fdqm FunctionDescriptorQueryModel) func(string)bool{
+    // Based on the name (as a string) of the function, select the actual function to be used
+    return functions.Sample
 }
 
+/*
 one little func for each function, function will contain it's own parameter extractor and appear of the form:
 func FunctionFunctionName(responseData []SingleData, fdqm FunctionDescriptorQueryModel) []SingleData {
 }
