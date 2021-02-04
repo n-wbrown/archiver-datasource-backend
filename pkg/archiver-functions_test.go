@@ -218,11 +218,90 @@ func TestExtractParamInt(t *testing.T) {
 }
 
 func TestExctractParamFloat64(t *testing.T) {
-    t.Skipf("Not implemented")
+    var tests = []struct{
+        input FunctionDescriptorQueryModel
+        targetArg string
+        output float64
+    }{
+        {
+		    input: FunctionDescriptorQueryModel{
+		        Def: FuncDefQueryModel{
+		            Fake: nil,
+		            Category: "Transform",
+		            DefaultParams: InitRawMsg(`[100]`),
+		            Name: "offset",
+		            Params: []FuncDefParamQueryModel{
+		                {
+		                    Name: "delta",
+		                    Options: nil,
+		                    Type: "float",
+		                },
+		            },
+		        },
+		        Params:[]string{"100"},
+		    },
+            targetArg: "delta",
+            output: 100,
+        },
+    }
+    for tdx, testCase := range tests {
+        testName := fmt.Sprintf("case %d: %v", tdx, testCase.output)
+        t.Run(testName, func(t *testing.T) {
+            result, err := testCase.input.ExtractParamFloat64(testCase.targetArg)
+            if err != nil {
+                t.Errorf("Error received")
+            }
+            if result != testCase.output {
+                t.Errorf(fmt.Sprintf("Got %v, wanted %v", result, testCase.output))
+            }
+        })
+    }
 }
 
 func TestExtractParamString(t *testing.T) {
-    t.Skipf("Not implemented")
+    var tests = []struct{
+        input FunctionDescriptorQueryModel
+        targetArg string
+        output string
+    }{
+        {
+		    input: FunctionDescriptorQueryModel{
+		        Def: FuncDefQueryModel{
+		            Fake: nil,
+		            Category: "Filter Series",
+		            DefaultParams: InitRawMsg(`[5 avg]`),
+		            Name: "bottom",
+		            Params: []FuncDefParamQueryModel{
+		                {
+		                    Name: "number",
+		                    Options: nil,
+		                    Type: "int",
+		                },
+		                {
+		                    Name: "value",
+		                    Options: &[]string{"avg", "min", "max", "absoluteMin", "absoluteMax" ,"sum"},
+		                    Type: "string",
+		                },
+		            },
+		        },
+		        Params: []string{"5", "avg"},
+		    },
+            targetArg: "value",
+            output: "avg",
+        },
+    }
+    for tdx, testCase := range tests {
+        testName := fmt.Sprintf("case %d: %v", tdx, testCase.output)
+        t.Run(testName, func(t *testing.T) {
+            result, err := testCase.input.ExtractParamString(testCase.targetArg)
+            if err != nil {
+                t.Errorf("Error received")
+            }
+            if result != testCase.output {
+                t.Errorf(fmt.Sprintf("Got %v, wanted %v", result, testCase.output))
+            }
+        })
+    }
 }
 
 func TestApplyFunctions(t *testing.T) {
