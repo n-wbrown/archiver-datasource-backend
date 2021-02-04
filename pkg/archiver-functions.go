@@ -3,6 +3,7 @@ package main
 import (
     "errors"
     "fmt"
+    "strconv"
 	"github.com/grafana/grafana-plugin-sdk-go/backend/log"
 )
 
@@ -49,32 +50,84 @@ func (fdqm FunctionDescriptorQueryModel) GetParamTypeByName (target string) (str
     return "", errors.New(errMsg)
 }
 
-func (fdqm FunctionDescriptorQueryModel) ExtractParamInt (target string) (int, error) {
-    var result int
-    responseStr, getErr := fdqm.GetParametersByName(target)
-    fmt.Println(responseStr)
-    
+func (fdqm FunctionDescriptorQueryModel) ExtractorBase (target string, targetType string ) (string, error) {
+    // confirm parameter type
+    typeStr, getErr := fdqm.GetParamTypeByName(target)
+    badReturn := ""
+    fmt.Println(typeStr)
+    if getErr != nil {
+        errMsg := fmt.Sprintf("Failed to obtain parameter type for %v", target)
+        log.DefaultLogger.Warn(errMsg)
+        return badReturn, errors.New(errMsg)
+    }
+    if typeStr != targetType {
+        // Warn but continue
+        errMsg := fmt.Sprintf("Type %v not expected", typeStr)
+        log.DefaultLogger.Warn(errMsg)
+    }
 
-    // attempt to locate the function
+    // attempt to locate and return the function's argument
+    valueStr, getErr := fdqm.GetParametersByName(target)
+    fmt.Println(valueStr)
     if getErr != nil {
         errMsg := fmt.Sprintf("Failed to obtain parameter %v", target)
         log.DefaultLogger.Warn(errMsg)
-        return result, errors.New(errMsg)
+        return badReturn, errors.New(errMsg)
+    }
+    return valueStr, nil
+}
+
+
+func (fdqm FunctionDescriptorQueryModel) ExtractParamInt (target string) (int, error) {
+    var result int
+
+    // get string for argument's value and check type
+    response, extractErr := fdqm.ExtractorBase(target, "int")
+    if extractErr != nil {
+        return result, extractErr
     }
 
-    
+    // convert to int
+    result, conversionErr := strconv.Atoi(response)
+    if conversionErr != nil {
+        errMsg := fmt.Sprintf("Failed to convert %v to int", target)
+        log.DefaultLogger.Warn(errMsg)
+        return result, errors.New(errMsg)
+    }
 
     return result, nil
 }
 
 func (fdqm FunctionDescriptorQueryModel) ExtractParamFloat64 (target string) (float64, error) {
     var result float64
+
+    // get string for argument's value and check type
+    response, extractErr := fdqm.ExtractorBase(target, "float")
+    if extractErr != nil {
+        return result, extractErr
+    }
+
+    // convert to int
+    result, conversionErr := strconv.ParseFloat(response, 64)
+    if conversionErr != nil {
+        errMsg := fmt.Sprintf("Failed to convert %v to float64", target)
+        log.DefaultLogger.Warn(errMsg)
+        return result, errors.New(errMsg)
+    }
+
     return result, nil
 }
 
 func (fdqm FunctionDescriptorQueryModel) ExtractParamString (target string) (string, error) {
     var result string
-    return result, nil
+
+    // get string for argument's value and check type
+    response, extractErr := fdqm.ExtractorBase(target, "string")
+    if extractErr != nil {
+        return result, extractErr
+    }
+
+    return response, nil
 }
 
 func ApplyFunctions(responseData []SingleData, qm ArchiverQueryModel) []SingleData {
