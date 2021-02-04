@@ -1,13 +1,12 @@
 package main
 // This file intended to handle the boilerplate "best-practices" setup recommended by the grafana-plugin-sdk's example file "sample-plugin.go". The implementation of the archive querying logic will be elsewhere.
 
-import ( 
+import (
 	"context"
 	"encoding/json"
 	// "math/rand"
 	"net/http"
     //"reflect"
-    "github.com/n-wbrown/archiver-datasource-backend/pkg/archiver"
 
 	"github.com/grafana/grafana-plugin-sdk-go/backend"
 	"github.com/grafana/grafana-plugin-sdk-go/backend/datasource"
@@ -83,7 +82,7 @@ func (td *ArchiverDatasource) query(ctx context.Context, query backend.DataQuery
 
 
     // Unmarshal the json into our queryModel
-    var qm archiver.ArchiverQueryModel
+    var qm ArchiverQueryModel
 
     response := backend.DataResponse{}
 
@@ -115,23 +114,23 @@ func (td *ArchiverDatasource) query(ctx context.Context, query backend.DataQuery
     // log.DefaultLogger.Debug("pluginctx.DataSourceInstanceSettings.URL", "value",    pluginctx.DataSourceInstanceSettings.URL)
 
     // make the query and compile the results into a SingleData instance
-    responseData := make([]archiver.SingleData, 0)
+    responseData := make([]SingleData, 0)
     targetPvList := make([]string,0) 
     if qm.Regex {
         // If the user is using a regex to specify the PVs, parse and resolve the regex expression first
 
         // assemble the list of PVs to be queried for
-        regexUrl := archiver.BuildRegexUrl(qm.Target, pluginctx)
-        regexQueryResponse, _ := archiver.ArchiverRegexQuery(regexUrl)
-        targetPvList, _ = archiver.ArchiverRegexQueryParser(regexQueryResponse)
+        regexUrl := BuildRegexUrl(qm.Target, pluginctx)
+        regexQueryResponse, _ := ArchiverRegexQuery(regexUrl)
+        targetPvList, _ = ArchiverRegexQueryParser(regexQueryResponse)
     } else {
         // If a regex is not being used, only check for listed PVs
-        targetPvList = archiver.IsolateBasicQuery(qm.Target)
+        targetPvList = IsolateBasicQuery(qm.Target)
     }
 
     // execute the individual queries
     for _, targetPv := range targetPvList {
-        parsedResponse, _ := archiver.ExecuteSingleQuery(targetPv, query, pluginctx, qm)
+        parsedResponse, _ := ExecuteSingleQuery(targetPv, query, pluginctx, qm)
         responseData = append(responseData, parsedResponse)
     }
 

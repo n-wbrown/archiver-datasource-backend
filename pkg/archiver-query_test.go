@@ -1,4 +1,4 @@
-package archiver
+package main
 
 import (
     "encoding/json"

@@ -1,4 +1,4 @@
-package archiver
+package main
 
 import (
     "fmt"
@@ -169,6 +169,60 @@ func TestGetParametersByName(t *testing.T) {
             }
         })
     }
+}
+
+func TestExtractParamInt(t *testing.T) {
+    var tests = []struct{
+        input FunctionDescriptorQueryModel
+        targetArg string
+        output int
+    }{
+        {
+		    input: FunctionDescriptorQueryModel{
+		        Def: FuncDefQueryModel{
+		            Fake: nil,
+		            Category: "Filter Series",
+		            DefaultParams: InitRawMsg(`[5 avg]`),
+		            Name: "bottom",
+		            Params: []FuncDefParamQueryModel{
+		                {
+		                    Name: "number",
+		                    Options: nil,
+		                    Type: "int",
+		                },
+		                {
+		                    Name: "value",
+		                    Options: &[]string{"avg", "min", "max", "absoluteMin", "absoluteMax" ,"sum"},
+		                    Type: "string",
+		                },
+		            },
+		        },
+		        Params: []string{"5", "avg"},
+		    },
+            targetArg: "number",
+            output: 5,
+        },
+    }
+    for tdx, testCase := range tests {
+        testName := fmt.Sprintf("case %d: %v", tdx, testCase.output)
+        t.Run(testName, func(t *testing.T) {
+            result, err := testCase.input.ExtractParamInt(testCase.targetArg)
+            if err != nil {
+                t.Errorf("Error received")
+            }
+            if result != testCase.output {
+                t.Errorf(fmt.Sprintf("Got %v, wanted %v", result, testCase.output))
+            }
+        })
+    }
+}
+
+func TestExctractParamFloat64(t *testing.T) {
+    t.Skipf("Not implemented")
+}
+
+func TestExtractParamString(t *testing.T) {
+    t.Skipf("Not implemented")
 }
 
 func TestApplyFunctions(t *testing.T) {

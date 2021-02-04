@@ -1,9 +1,8 @@
-package archiver
+package main
 
 import (
     "errors"
     "fmt"
-    "github.com/n-wbrown/archiver-datasource-backend/pkg/functions"
 	"github.com/grafana/grafana-plugin-sdk-go/backend/log"
 )
 
@@ -34,6 +33,21 @@ func (fdqm FunctionDescriptorQueryModel) GetParametersByName (target string) (st
     return "", errors.New(errMsg)
 }
 
+func (fdqm FunctionDescriptorQueryModel) ExtractParamInt (target string) (int, error) {
+    var result int
+    return result, nil
+}
+
+func (fdqm FunctionDescriptorQueryModel) ExtractParamFloat64 (target string) (float64, error) {
+    var result float64
+    return result, nil
+}
+
+func (fdqm FunctionDescriptorQueryModel) ExtractParamString (target string) (string, error) {
+    var result string
+    return result, nil
+}
+
 func ApplyFunctions(responseData []SingleData, qm ArchiverQueryModel) []SingleData {
     // iterate through the list of functions
     return responseData
@@ -47,7 +61,8 @@ func FunctionSelector(responseData []SingleData, fdqm FunctionDescriptorQueryMod
 
     switch name {
         case "offset":
-            responseData = functions.Offset(responseData, fdqm.GetParametersByName("delta"))
+            delta := 3.3
+            responseData = Offset(responseData, delta)
         default:
             errMsg := fmt.Sprintf("Function %v is not a recognized function", name)
             log.DefaultLogger.Warn(errMsg)
