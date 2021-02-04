@@ -171,6 +171,116 @@ func TestGetParametersByName(t *testing.T) {
     }
 }
 
+func TestGetParamTypeByName(t *testing.T) {
+    var tests = []struct{
+        input FunctionDescriptorQueryModel
+        targetArg string
+        output *string
+    }{
+		{
+		    input: FunctionDescriptorQueryModel{
+		        Def: FuncDefQueryModel{
+		            Fake: nil,
+		            Category: "Options",
+		            DefaultParams: InitRawMsg(`[900]`),
+		            Name: "binInterval",
+                    Params: []FuncDefParamQueryModel{
+		                {
+		                    Name: "interval",
+		                    Options: nil,
+		                    Type: "int",
+		                },
+		            },
+		        },
+		        Params:[]string{"900"},
+		    },
+            targetArg: "interval",
+            output: InitString("int"),
+		},
+        {
+		    input: FunctionDescriptorQueryModel{
+		        Def: FuncDefQueryModel{
+		            Fake: nil,
+		            Category: "Filter Series",
+		            DefaultParams: InitRawMsg(`[5 avg]`),
+		            Name: "bottom",
+		            Params: []FuncDefParamQueryModel{
+		                {
+		                    Name: "number",
+		                    Options: nil,
+		                    Type: "int",
+		                },
+		                {
+		                    Name: "value",
+		                    Options: &[]string{"avg", "min", "max", "absoluteMin", "absoluteMax" ,"sum"},
+		                    Type: "string",
+		                },
+		            },
+		        },
+		        Params: []string{"5", "avg"},
+		    },
+            targetArg: "value",
+            output: InitString("string"),
+        },
+        {
+		    input: FunctionDescriptorQueryModel{
+		        Def: FuncDefQueryModel{
+		            Fake: nil,
+		            Category: "Transform",
+		            DefaultParams: InitRawMsg(`[100]`),
+		            Name: "offset",
+		            Params: []FuncDefParamQueryModel{
+		                {
+		                    Name: "delta",
+		                    Options: nil,
+		                    Type: "float",
+		                },
+		            },
+		        },
+		        Params:[]string{"100"},
+		    },
+            targetArg: "delta",
+            output: InitString("float"),
+        },
+        {
+		    input: FunctionDescriptorQueryModel{
+		        Def: FuncDefQueryModel{
+		            Fake: nil,
+		            Category: "Transform",
+		            DefaultParams: InitRawMsg(`[]`),
+		            Name: "delta",
+		            Params: []FuncDefParamQueryModel{},
+		        },
+		        Params:[]string{},
+		    },
+            targetArg: "delta",
+            output: nil,
+		},
+    }
+
+    for tdx, testCase := range tests {
+        testName := fmt.Sprintf("case %d: %v", tdx, testCase.output)
+        t.Run(testName, func(t *testing.T) {
+            result, err := testCase.input.GetParamTypeByName(testCase.targetArg)
+            if testCase.output == nil {
+                if err == nil {
+                    t.Errorf("An error was expected but not received. Bad output: %v", result)
+                }
+                if result != "" {
+                    t.Errorf("Expected output was \"\" but something else was received. Bad output: %v", result)
+                }
+            } else {
+                if err != nil {
+                    t.Errorf("An error was received but not expected. Bad output: %v", result)
+                }
+                if result != *testCase.output {
+                    t.Errorf("Incorrect result: got %v, want %v", result, *testCase.output)
+                }
+            }
+        })
+    }
+}
+
 func TestExtractParamInt(t *testing.T) {
     var tests = []struct{
         input FunctionDescriptorQueryModel
@@ -217,7 +327,7 @@ func TestExtractParamInt(t *testing.T) {
     }
 }
 
-func TestExctractParamFloat64(t *testing.T) {
+func TestExtractParamFloat64(t *testing.T) {
     var tests = []struct{
         input FunctionDescriptorQueryModel
         targetArg string

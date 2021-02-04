@@ -33,8 +33,37 @@ func (fdqm FunctionDescriptorQueryModel) GetParametersByName (target string) (st
     return "", errors.New(errMsg)
 }
 
+func (fdqm FunctionDescriptorQueryModel) GetParamTypeByName (target string) (string, error) {
+    // Provide the argument value for the function given its name.
+    //  If multiple are received, only return the first. This should never happen. 
+    if len(fdqm.Params) < len(fdqm.Def.Params) {
+        errMsgLen := fmt.Sprintf("List of arguments exceeded the number of arguments provided (got %v wanted %v)", len(fdqm.Params), len(fdqm.Def.Params))
+        return "", errors.New(errMsgLen)
+    }
+    for idx, def := range fdqm.Def.Params {
+        if def.Name == target {
+            return fdqm.Def.Params[idx].Type, nil
+        }
+    }
+    errMsg := fmt.Sprintf("Not able to identify type of %v in function %v", target, fdqm.Def.Name)
+    return "", errors.New(errMsg)
+}
+
 func (fdqm FunctionDescriptorQueryModel) ExtractParamInt (target string) (int, error) {
     var result int
+    responseStr, getErr := fdqm.GetParametersByName(target)
+    fmt.Println(responseStr)
+    
+
+    // attempt to locate the function
+    if getErr != nil {
+        errMsg := fmt.Sprintf("Failed to obtain parameter %v", target)
+        log.DefaultLogger.Warn(errMsg)
+        return result, errors.New(errMsg)
+    }
+
+    
+
     return result, nil
 }
 
