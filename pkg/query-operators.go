@@ -14,6 +14,7 @@ func OperatorValidator(input string) bool {
 
     // copied from the types.ts specification
     RECOGNIZED_OPERATORS := []string{
+        "",
         "firstSample",
         "lastSample",
         "firstFill",
