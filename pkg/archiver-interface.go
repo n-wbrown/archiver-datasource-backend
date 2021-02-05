@@ -135,7 +135,12 @@ func (td *ArchiverDatasource) query(ctx context.Context, query backend.DataQuery
     }
 
     // Apply Functions to the data
-    // ApplyFunctions(responseData)
+    var funcErr error
+    responseData, funcErr = ApplyFunctions(responseData, qm)
+    if funcErr != nil {
+        log.DefaultLogger.Warn("Error applying functions")
+    }
+
 
     // for each query response, compile the data into response.Framse
     for _, singleResponse := range responseData {
