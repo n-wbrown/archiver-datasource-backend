@@ -124,7 +124,143 @@ func TestTop(t *testing.T) {
 }
 
 func TestBottom(t *testing.T) {
-    t.Skipf("Not Implemeneted")
+    var tests = []struct{
+        inputSd []SingleData
+        number int
+        value string
+        output []SingleData
+    }{
+        {
+            inputSd: []SingleData{
+                {
+                    Times: TimeArrayHelper(0,6),
+                    Values: []float64{1,1,2,3,5,8},
+                },
+                {
+                    Times: TimeArrayHelper(0,6),
+                    Values: []float64{10,10,20,30,50,80},
+                },
+            },
+            number: 1,
+            value: "avg",
+            output: []SingleData{
+                {
+                    Times: TimeArrayHelper(0,6),
+                    Values: []float64{1,1,2,3,5,8},
+                },
+            },
+        },
+        {
+            inputSd: []SingleData{
+                {
+                    Times: TimeArrayHelper(0,6),
+                    Values: []float64{1,1,2,3,5,8},
+                },
+                {
+                    Times: TimeArrayHelper(0,6),
+                    Values: []float64{10,10,20,30,50,80},
+                },
+            },
+            number: 1,
+            value: "min",
+            output: []SingleData{
+                {
+                    Times: TimeArrayHelper(0,6),
+                    Values: []float64{1,1,2,3,5,8},
+                },
+            },
+        },
+        {
+            inputSd: []SingleData{
+                {
+                    Times: TimeArrayHelper(0,6),
+                    Values: []float64{1,1,2,3,5,8},
+                },
+                {
+                    Times: TimeArrayHelper(0,6),
+                    Values: []float64{10,10,20,30,50,80},
+                },
+            },
+            number: 1,
+            value: "max",
+            output: []SingleData{
+                {
+                    Times: TimeArrayHelper(0,6),
+                    Values: []float64{1,1,2,3,5,8},
+                },
+            },
+        },
+        {
+            inputSd: []SingleData{
+                {
+                    Times: TimeArrayHelper(0,6),
+                    Values: []float64{1,1,2,3,5,8},
+                },
+                {
+                    Times: TimeArrayHelper(0,6),
+                    Values: []float64{0,10,20,30,50,80},
+                },
+            },
+            number: 1,
+            value: "absoluteMin",
+            output: []SingleData{
+                {
+                    Times: TimeArrayHelper(0,6),
+                    Values: []float64{0,10,20,30,50,80},
+                },
+            },
+        },
+        {
+            inputSd: []SingleData{
+                {
+                    Times: TimeArrayHelper(0,6),
+                    Values: []float64{1,1,2,3,5,8},
+                },
+                {
+                    Times: TimeArrayHelper(0,6),
+                    Values: []float64{10,10,20,30,50,80},
+                },
+            },
+            number: 1,
+            value: "absoluteMax",
+            output: []SingleData{
+                {
+                    Times: TimeArrayHelper(0,6),
+                    Values: []float64{1,1,2,3,5,8},
+                },
+            },
+        },
+        {
+            inputSd: []SingleData{
+                {
+                    Times: TimeArrayHelper(0,6),
+                    Values: []float64{1,1,2,3,5,8},
+                },
+                {
+                    Times: TimeArrayHelper(0,6),
+                    Values: []float64{10},
+                },
+            },
+            number: 1,
+            value: "sum",
+            output: []SingleData{
+                {
+                    Times: TimeArrayHelper(0,6),
+                    Values: []float64{10},
+                },
+            },
+        },
+    }
+    for tdx, testCase := range tests {
+        testName := fmt.Sprintf("case %d: %v", tdx, testCase.value)
+        t.Run(testName, func(t *testing.T) {
+            result, err := Bottom(testCase.inputSd, testCase.number, testCase.value)
+            if err != nil {
+                t.Errorf("Error not expected %v", err)
+            }
+            SingleDataCompareHelper(result, testCase.output, t)
+        })
+    }
 }
 
 func TestExclude(t *testing.T) {

@@ -50,6 +50,7 @@ func SingleDataCompareHelper(result []SingleData, wanted []SingleData, t *testin
     // Raise no errors if two []SingleData are identical, raise errors if they are not
     if len(result) != len(wanted) {
         t.Errorf("Input and output SingleData differ in length. Wanted %v, got %v", len(wanted), len(result))
+        return
     }
     for udx, _ := range wanted {
         if result[udx].Name != wanted[udx].Name {
@@ -57,6 +58,7 @@ func SingleDataCompareHelper(result []SingleData, wanted []SingleData, t *testin
         }
         if len(wanted[udx].Values) != len(result[udx].Values) {
             t.Errorf("Input and output arrays differ in length. Wanted %v, got %v", len(wanted[udx].Values), len(result[udx].Values))
+            return
         }
         for idx, _ := range(wanted[udx].Values) {
             if result[udx].Values[idx] != wanted[udx].Values[idx] {
