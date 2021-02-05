@@ -131,7 +131,16 @@ func (fdqm FunctionDescriptorQueryModel) ExtractParamString (target string) (str
 
 func ApplyFunctions(responseData []SingleData, qm ArchiverQueryModel) ([]SingleData, error) {
     // iterate through the list of functions
-    return responseData, nil
+    newData := responseData
+    for _, fdqm := range qm.Functions {
+        var err error
+        newData, err = FunctionSelector(newData, fdqm)
+        if err != nil {
+            errMsg := fmt.Sprintf("Function %v has failed", fdqm.Def.Name)
+            log.DefaultLogger.Warn(errMsg)
+        }
+    }
+    return newData, nil
 }
 
 func FunctionSelector(responseData []SingleData, fdqm FunctionDescriptorQueryModel) ([]SingleData, error) {
