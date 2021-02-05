@@ -11,6 +11,11 @@ import (
 
 // Utilities 
 
+type SingleDataOrder struct {
+    sD SingleData
+    rank float64
+}
+
 func FilterIndexer(allData []SingleData, value string) ([]float64, error) {
     rank := make([]float64, len(allData))
     for idx, sData := range allData {
@@ -130,9 +135,34 @@ func Offset(allData []SingleData, delta float64) []SingleData {
 // Array to Scalar Functions
 
 // Filter Series Functions
-type SingleDataOrder struct {
-    sD SingleData
-    rank float64
+
+func Top(allData []SingleData, number int, value string) ([]SingleData, error) {
+    newData := make([]SingleData, 0, len(allData))
+    rank, idxErr  := FilterIndexer(allData, value)
+    if idxErr != nil {
+        return allData, idxErr
+    }
+    if len(rank) != len(allData) {
+        errMsg := fmt.Sprintf("Length of data (%v) and indexes (%v)differ", len(allData), len(rank))
+        return allData, errors.New(errMsg)
+    }
+    order := make([]SingleDataOrder, len(allData))
+    for idx, _ := range allData {
+        order[idx] = SingleDataOrder{
+            sD: allData[idx],
+            rank: rank[idx],
+        }
+    }
+    sort.SliceStable(order, func(i, j int) bool {
+        // the flipped sign will reverse the sorting order
+        return order[i].rank > order[j].rank
+    })
+    for idx, _ := range order {
+        if idx >= number { break }
+        newData = append(newData, order[idx].sD)
+    }
+
+    return newData, nil
 }
 
 func Bottom(allData []SingleData, number int, value string) ([]SingleData, error) {
