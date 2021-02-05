@@ -3,6 +3,7 @@ package main
 import (
     "encoding/json"
     "time"
+    "testing"
 )
 
 func MultiReturnHelperParseDuration(result time.Duration, err error) time.Duration {
@@ -45,3 +46,19 @@ func TimeArrayHelper(start int, end int) []time.Time {
     return response
 }
 
+func SingleDataCompareHelper(result []SingleData, wanted []SingleData, t *testing.T){
+    // Raise no errors if two []SingleData are identical, raise errors if they are not
+    if len(result) != len(wanted) {
+        t.Errorf("Input and output SingleData  differ in length. Wanted %v, got %v", len(wanted), len(result))
+    }
+    for udx, _ := range wanted {
+        if len(wanted[udx].Values) != len(result[udx].Values) {
+            t.Errorf("Input and output arrays differ in length. Wanted %v, got %v", len(wanted[udx].Values), len(result[udx].Values))
+        }
+        for idx, _ := range(wanted[udx].Values) {
+            if result[udx].Values[idx] != wanted[udx].Values[idx] {
+                t.Errorf("Values at index %v do not match, Wanted %v, got %v", idx, wanted[udx].Values[idx], result[udx].Values[idx])
+            }
+        }
+    }
+}

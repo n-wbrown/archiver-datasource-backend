@@ -574,23 +574,9 @@ func TestApplyFunctions(t *testing.T) {
             if err != nil {
                 t.Errorf("An error has been generated")
             }
-            if len(result) != len(testCase.output) {
-                t.Errorf("Input and output SingleData  differ in length. Wanted %v, got %v", len(testCase.output), len(result))
-            }
-            for udx, _ := range testCase.output {
-                if len(testCase.output[udx].Values) != len(result[udx].Values) {
-                    t.Errorf("Input and output arrays differ in length. Wanted %v, got %v", len(testCase.output[udx].Values), len(result[udx].Values))
-                }
-                for idx, _ := range(testCase.output[udx].Values) {
-                    if result[udx].Values[idx] != tests[tdx].output[udx].Values[idx] {
-                        t.Errorf("Values at index %v do not match, Wanted %v, got %v", idx, testCase.output[udx].Values[idx], result[udx].Values[idx]) 
-                    }
-                }
-            }
+            SingleDataCompareHelper(result, testCase.output, t)
         })
     }
-
-
 }
 
 func TestFunctionSelector(t *testing.T) {
@@ -635,19 +621,7 @@ func TestFunctionSelector(t *testing.T) {
             if err != nil {
                 t.Errorf("An error has been generated")
             }
-            if len(result) != len(testCase.output) {
-                t.Errorf("Input and output SingleData  differ in length. Wanted %v, got %v", len(testCase.output), len(result))
-            }
-            for udx, _ := range testCase.output {
-                if len(testCase.output[udx].Values) != len(result[udx].Values) {
-                    t.Errorf("Input and output arrays differ in length. Wanted %v, got %v", len(testCase.output[udx].Values), len(result[udx].Values))
-                }
-                for idx, _ := range(testCase.output[udx].Values) {
-                    if result[udx].Values[idx] != tests[tdx].output[udx].Values[idx] {
-                        t.Errorf("Values at index %v do not match, Wanted %v, got %v", idx, testCase.output[udx].Values[idx], result[udx].Values[idx]) 
-                    }
-                }
-            }
+            SingleDataCompareHelper(result, testCase.output, t)
         })
     }
 }

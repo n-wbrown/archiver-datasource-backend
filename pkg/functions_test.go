@@ -20,6 +20,12 @@ func TestScale(t *testing.T) {
 
 func TestOffset(t *testing.T) {
     t.Skipf("Not Implemeneted")
+    /*
+    var tests = []struct{
+        inputSd []SingleData
+        output []SingleData
+    }{
+    */
 }
 
 func TestDelta(t *testing.T) {
