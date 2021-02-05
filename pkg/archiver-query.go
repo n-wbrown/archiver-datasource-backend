@@ -127,8 +127,9 @@ func BuildQueryUrl(target string, query backend.DataQuery, pluginctx backend.Plu
 }
 
 type SingleData struct {
-   Times []time.Time
-   Values []float64
+    Name string
+    Times []time.Time
+    Values []float64
 }
 
 type ArchiverResponseModel struct {

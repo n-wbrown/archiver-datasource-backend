@@ -49,9 +49,12 @@ func TimeArrayHelper(start int, end int) []time.Time {
 func SingleDataCompareHelper(result []SingleData, wanted []SingleData, t *testing.T){
     // Raise no errors if two []SingleData are identical, raise errors if they are not
     if len(result) != len(wanted) {
-        t.Errorf("Input and output SingleData  differ in length. Wanted %v, got %v", len(wanted), len(result))
+        t.Errorf("Input and output SingleData differ in length. Wanted %v, got %v", len(wanted), len(result))
     }
     for udx, _ := range wanted {
+        if result[udx].Name != wanted[udx].Name {
+            t.Errorf("Input and output SingleData have different Pvs. Wanted %v, got %v", wanted[udx].Name, result[udx].Name)
+        }
         if len(wanted[udx].Values) != len(result[udx].Values) {
             t.Errorf("Input and output arrays differ in length. Wanted %v, got %v", len(wanted[udx].Values), len(result[udx].Values))
         }
