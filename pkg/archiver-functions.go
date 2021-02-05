@@ -54,7 +54,6 @@ func (fdqm FunctionDescriptorQueryModel) ExtractorBase (target string, targetTyp
     // confirm parameter type
     typeStr, getErr := fdqm.GetParamTypeByName(target)
     badReturn := ""
-    fmt.Println(typeStr)
     if getErr != nil {
         errMsg := fmt.Sprintf("Failed to obtain parameter type for %v", target)
         log.DefaultLogger.Warn(errMsg)
@@ -68,7 +67,6 @@ func (fdqm FunctionDescriptorQueryModel) ExtractorBase (target string, targetTyp
 
     // attempt to locate and return the function's argument
     valueStr, getErr := fdqm.GetParametersByName(target)
-    fmt.Println(valueStr)
     if getErr != nil {
         errMsg := fmt.Sprintf("Failed to obtain parameter %v", target)
         log.DefaultLogger.Warn(errMsg)

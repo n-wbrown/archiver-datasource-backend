@@ -8,10 +8,6 @@ import (
 	//"github.com/grafana/grafana-plugin-sdk-go/backend/log"
 )
 
-func Sample(input string) bool {
-    fmt.Println(input)
-    return true
-}
 
 // Utilities 
 
