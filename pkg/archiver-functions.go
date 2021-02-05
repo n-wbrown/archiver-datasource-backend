@@ -77,7 +77,6 @@ func (fdqm FunctionDescriptorQueryModel) ExtractorBase (target string, targetTyp
     return valueStr, nil
 }
 
-
 func (fdqm FunctionDescriptorQueryModel) ExtractParamInt (target string) (int, error) {
     var result int
 
@@ -135,20 +134,25 @@ func ApplyFunctions(responseData []SingleData, qm ArchiverQueryModel) []SingleDa
     return responseData
 }
 
-func FunctionSelector(responseData []SingleData, fdqm FunctionDescriptorQueryModel) error{
+func FunctionSelector(responseData []SingleData, fdqm FunctionDescriptorQueryModel) ([]SingleData, error) {
     // Based on the name (as a string) of the function, select the actual function to be used
-    // Note: This changes responseData inplace 
+    // If the function fails to apply, the data will be returned unaltered 
     name := fdqm.Def.Name
     // category := fdqm.Def.Category
-
     switch name {
         case "offset":
-            delta := 3.3
-            responseData = Offset(responseData, delta)
+            delta, deltaErr := fdqm.ExtractParamFloat64("delta")
+            if deltaErr != nil {
+                return responseData, deltaErr
+            }
+            newData := Offset(responseData, delta)
+            return newData, nil
         default:
             errMsg := fmt.Sprintf("Function %v is not a recognized function", name)
             log.DefaultLogger.Warn(errMsg)
-            return errors.New(errMsg)
+            return responseData, errors.New(errMsg)
     }
-    return nil
+
+    // this should never be reached
+    return responseData, nil
 }

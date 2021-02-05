@@ -3,6 +3,7 @@ package main
 import (
     "fmt"
     "testing"
+	//"github.com/grafana/grafana-plugin-sdk-go/backend/log"
 )
 
 // Tests
@@ -438,6 +439,7 @@ func TestFunctionSelector(t *testing.T) {
                     Params: []FuncDefParamQueryModel{
                         {
                             Name: "delta",
+                            Type: "float",
                         },
                     },
                 },
@@ -449,27 +451,28 @@ func TestFunctionSelector(t *testing.T) {
                     Values: []float64{3,3,4,5,7,10},
                 },
             },
-
         },
     }
 
     for tdx, testCase := range tests {
         testName := fmt.Sprintf("case %d: %v", tdx, testCase.output)
         t.Run(testName, func(t *testing.T) {
-            err := FunctionSelector(testCase.inputSd, testCase.inputFdqm)
+            result, err := FunctionSelector(tests[tdx].inputSd, testCase.inputFdqm)
+            fmt.Println(tests[tdx].inputSd)
+            fmt.Printf("Index: %p", &tests[tdx])
             if err != nil {
                 t.Errorf("An error has been generated")
             }
-            if len(testCase.inputSd) != len(testCase.output) {
-                t.Errorf("Input and output SingleData  differ in length. Wanted %v, got %v", len(testCase.output), len(testCase.inputSd))
+            if len(result) != len(testCase.output) {
+                t.Errorf("Input and output SingleData  differ in length. Wanted %v, got %v", len(testCase.output), len(result))
             }
             for udx, _ := range testCase.output {
-                if len(testCase.output[udx].Values) != len(testCase.inputSd[udx].Values) {
-                    t.Errorf("Input and output arrays differ in length. Wanted %v, got %v", len(testCase.output[udx].Values), len(testCase.inputSd[udx].Values))
+                if len(testCase.output[udx].Values) != len(result[udx].Values) {
+                    t.Errorf("Input and output arrays differ in length. Wanted %v, got %v", len(testCase.output[udx].Values), len(result[udx].Values))
                 }
                 for idx, _ := range(testCase.output[udx].Values) {
-                    if testCase.inputSd[udx].Values[idx] != testCase.output[udx].Values[idx] {
-                        t.Errorf("Values at index %v do not match, Wanted %v, got %v", idx, testCase.output[udx].Values[idx], testCase.inputSd[udx].Values[idx]) 
+                    if result[udx].Values[idx] != tests[tdx].output[udx].Values[idx] {
+                        t.Errorf("Values at index %v do not match, Wanted %v, got %v", idx, testCase.output[udx].Values[idx], result[udx].Values[idx]) 
                     }
                 }
             }
