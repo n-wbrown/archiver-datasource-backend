@@ -52,7 +52,6 @@ func TestIdentifyFunctionsByName(t *testing.T) {
             if len(result) != len(testCase.output) {
                 t.Errorf("lengths differ: got %v, want %v", len(result), len(testCase.output))
             }
-            fmt.Println(result)
             for idx, out := range result {
                 if out.Def.Name != testCase.output[idx].Def.Name {
                     t.Errorf("got %v, want %v", out, result[idx])
