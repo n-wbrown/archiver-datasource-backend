@@ -149,6 +149,13 @@ func FunctionSelector(responseData []SingleData, fdqm FunctionDescriptorQueryMod
     name := fdqm.Def.Name
     // category := fdqm.Def.Category
     switch name {
+        case "scale":
+            factor, factorErr := fdqm.ExtractParamFloat64("factor")
+            if factorErr != nil {
+                return responseData, factorErr
+            }
+            newData := Scale(responseData, factor)
+            return newData, nil
         case "offset":
             delta, deltaErr := fdqm.ExtractParamFloat64("delta")
             if deltaErr != nil {
