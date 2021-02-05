@@ -1,6 +1,7 @@
 package main
 
 import (
+    "fmt"
     "testing"
 )
 
@@ -19,13 +20,34 @@ func TestScale(t *testing.T) {
 }
 
 func TestOffset(t *testing.T) {
-    t.Skipf("Not Implemeneted")
-    /*
     var tests = []struct{
         inputSd []SingleData
+        delta float64
         output []SingleData
     }{
-    */
+        {
+            inputSd: []SingleData{
+                {
+                    Times: TimeArrayHelper(0,6),
+                    Values: []float64{1,1,2,3,5,8},
+                },
+            },
+            delta: 2,
+            output: []SingleData{
+                {
+                    Times: TimeArrayHelper(0,6),
+                    Values: []float64{3,3,4,5,7,10},
+                },
+            },
+        },
+    }
+    for tdx, testCase := range tests {
+        testName := fmt.Sprintf("case %d: %v", tdx, testCase.output)
+        t.Run(testName, func(t *testing.T) {
+            result := Offset(testCase.inputSd, testCase.delta)
+            SingleDataCompareHelper(result, testCase.output, t)
+        })
+    }
 }
 
 func TestDelta(t *testing.T) {
