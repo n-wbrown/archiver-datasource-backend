@@ -416,7 +416,181 @@ func TestExtractParamString(t *testing.T) {
 }
 
 func TestApplyFunctions(t *testing.T) {
-    t.Skipf("Test not implemented")
+    var tests = []struct{
+        inputSd []SingleData
+        inputAqm ArchiverQueryModel
+        output []SingleData
+    }{
+        {
+            inputSd: []SingleData{
+                {
+                    Times: TimeArrayHelper(0,6),
+                    Values: []float64{1,1,2,3,5,8},
+                },
+            },
+            inputAqm: ArchiverQueryModel{
+                Functions: []FunctionDescriptorQueryModel{
+                    {
+                        Def: FuncDefQueryModel{
+                            Category: "Transform",
+                            Name: "offset",
+                            Params: []FuncDefParamQueryModel{
+                                    {
+                                        Name: "delta",
+                                        Type: "float",
+                                    },
+                            },
+                        },
+                        Params: []string{"2"},
+                    },
+                },
+            },
+            output: []SingleData{
+                {
+                    Times: TimeArrayHelper(0,6),
+                    Values: []float64{3,3,4,5,7,10},
+                },
+            },
+        },
+        {
+            inputSd: []SingleData{
+                {
+                    Times: TimeArrayHelper(0,6),
+                    Values: []float64{1,1,2,3,5,8},
+                },
+            },
+            inputAqm: ArchiverQueryModel{
+                Functions: []FunctionDescriptorQueryModel{
+                    {
+                        Def: FuncDefQueryModel{
+                            Category: "Transform",
+                            Name: "offset",
+                            Params: []FuncDefParamQueryModel{
+                                    {
+                                        Name: "delta",
+                                        Type: "float",
+                                    },
+                            },
+                        },
+                        Params: []string{"2"},
+                    },
+                    {
+                        Def: FuncDefQueryModel{
+                            Category: "Transform",
+                            Name: "scale",
+                            Params: []FuncDefParamQueryModel{
+                                {
+                                    Name: "factor",
+                                    Type: "float",
+                                },
+                            },
+                        },
+                        Params: []string{"3"},
+                    },
+                },
+            },
+            output: []SingleData{
+                {
+                    Times: TimeArrayHelper(0,6),
+                    Values: []float64{9,9,12,15,21,30},
+                },
+            },
+        },
+        {
+            inputSd: []SingleData{
+                {
+                    Times: TimeArrayHelper(0,6),
+                    Values: []float64{1,1,2,3,5,8},
+                },
+                {
+                    Times: TimeArrayHelper(0,6),
+                    Values: []float64{100, 100, 100, 100, 100, 100},
+                },
+            },
+            inputAqm: ArchiverQueryModel{
+                Functions: []FunctionDescriptorQueryModel{
+                    {
+                        Def: FuncDefQueryModel{
+                            Category: "Transform",
+                            Name: "offset",
+                            Params: []FuncDefParamQueryModel{
+                                    {
+                                        Name: "delta",
+                                        Type: "float",
+                                    },
+                            },
+                        },
+                        Params: []string{"2"},
+                    },
+                    {
+                        Def: FuncDefQueryModel{
+                            Category: "Transform",
+                            Name: "scale",
+                            Params: []FuncDefParamQueryModel{
+                                {
+                                    Name: "factor",
+                                    Type: "float",
+                                },
+                            },
+                        },
+                        Params: []string{"3"},
+                    },
+                    {
+		                Def: FuncDefQueryModel{
+		                    Fake: nil,
+		                    Category: "Filter Series",
+		                    DefaultParams: InitRawMsg(`[1 avg]`),
+		                    Name: "bottom",
+                            Params: []FuncDefParamQueryModel{
+		                        {
+		                            Name: "number",
+		                            Options: nil,
+		                            Type: "int",
+		                        },
+		                        {
+		                            Name: "value",
+		                            Options: &[]string{"avg", "min", "max", "absoluteMin", "absoluteMax" ,"sum"},
+		                            Type: "string",
+		                        },
+		                    },
+                        },
+		                Params: []string{"1", "avg"},
+                    },
+                },
+            },
+            output: []SingleData{
+                {
+                    Times: TimeArrayHelper(0,6),
+                    Values: []float64{9,9,12,15,21,30},
+                },
+            },
+        },
+    }
+
+    for tdx, testCase := range tests {
+        testName := fmt.Sprintf("case %d: %v", tdx, testCase.output)
+        t.Run(testName, func(t *testing.T) {
+            result, err := ApplyFunctions(tests[tdx].inputSd, testCase.inputAqm)
+            if err != nil {
+                t.Errorf("An error has been generated")
+            }
+            if len(result) != len(testCase.output) {
+                t.Errorf("Input and output SingleData  differ in length. Wanted %v, got %v", len(testCase.output), len(result))
+            }
+            for udx, _ := range testCase.output {
+                if len(testCase.output[udx].Values) != len(result[udx].Values) {
+                    t.Errorf("Input and output arrays differ in length. Wanted %v, got %v", len(testCase.output[udx].Values), len(result[udx].Values))
+                }
+                for idx, _ := range(testCase.output[udx].Values) {
+                    if result[udx].Values[idx] != tests[tdx].output[udx].Values[idx] {
+                        t.Errorf("Values at index %v do not match, Wanted %v, got %v", idx, testCase.output[udx].Values[idx], result[udx].Values[idx]) 
+                    }
+                }
+            }
+        })
+    }
+
+
 }
 
 func TestFunctionSelector(t *testing.T) {
@@ -458,8 +632,6 @@ func TestFunctionSelector(t *testing.T) {
         testName := fmt.Sprintf("case %d: %v", tdx, testCase.output)
         t.Run(testName, func(t *testing.T) {
             result, err := FunctionSelector(tests[tdx].inputSd, testCase.inputFdqm)
-            fmt.Println(tests[tdx].inputSd)
-            fmt.Printf("Index: %p", &tests[tdx])
             if err != nil {
                 t.Errorf("An error has been generated")
             }

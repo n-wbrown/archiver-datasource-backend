@@ -129,9 +129,9 @@ func (fdqm FunctionDescriptorQueryModel) ExtractParamString (target string) (str
     return response, nil
 }
 
-func ApplyFunctions(responseData []SingleData, qm ArchiverQueryModel) []SingleData {
+func ApplyFunctions(responseData []SingleData, qm ArchiverQueryModel) ([]SingleData, error) {
     // iterate through the list of functions
-    return responseData
+    return responseData, nil
 }
 
 func FunctionSelector(responseData []SingleData, fdqm FunctionDescriptorQueryModel) ([]SingleData, error) {
