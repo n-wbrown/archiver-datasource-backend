@@ -13,17 +13,20 @@ func Sample(input string) bool {
 // Utilities 
 
 // Transform functions
-
-func OffsetMgr(data []SingleData, fdqm FunctionDescriptorQueryModel) (float64, error) {
-    var delta float64
-    /*
-    delta, getEerr :=fdqm.GetParametersByName("delta")
-    if err != nil {
-        return delta, errors.New("Parameter not found")
+func Scale(allData []SingleData, factor float64) []SingleData {
+    newData := make([]SingleData, len(allData))
+    for ddx, oneData := range allData {
+        newValues := make([]float64, len(oneData.Values))
+        for idx, val := range oneData.Values {
+            newValues[idx] = val * factor
+        }
+        newSd := SingleData{
+            Times: oneData.Times,
+            Values: newValues,
+        }
+        newData[ddx] = newSd
     }
-    */
-
-    return delta, nil
+    return newData
 }
 
 func Offset(allData []SingleData, delta float64) []SingleData {
