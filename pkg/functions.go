@@ -152,6 +152,24 @@ func Delta(allData []SingleData) []SingleData {
     return newData
 }
 
+func Fluctuation(allData []SingleData) []SingleData {
+    newData := make([]SingleData, len(allData))
+    for ddx, oneData := range allData {
+        newValues := make([]float64, len(oneData.Values))
+        var startingValue float64
+        for idx, val := range oneData.Values {
+            if idx == 0 { startingValue = val}
+            newValues[idx] = val - startingValue
+        }
+        newSd := SingleData{
+            Name: oneData.Name,
+            Values: newValues,
+            Times: oneData.Times,
+        }
+        newData[ddx] = newSd
+    }
+    return newData
+}
 
 // Array to Scalar Functions
 

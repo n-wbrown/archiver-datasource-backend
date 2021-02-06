@@ -107,7 +107,32 @@ func TestDelta(t *testing.T) {
 }
 
 func TestFluctuation(t *testing.T) {
-    t.Skipf("Not Implemeneted")
+    var tests = []struct{
+        inputSd []SingleData
+        output []SingleData
+    }{
+        {
+            inputSd: []SingleData{
+                {
+                    Times: TimeArrayHelper(0,6),
+                    Values: []float64{1,1,2,3,5,8},
+                },
+            },
+            output: []SingleData{
+                {
+                    Times: TimeArrayHelper(1,6),
+                    Values: []float64{0,0,1,2,4,7},
+                },
+            },
+        },
+    }
+    for tdx, testCase := range tests {
+        testName := fmt.Sprintf("case: %d", tdx)
+        t.Run(testName, func(t *testing.T) {
+            result := Fluctuation(testCase.inputSd)
+            SingleDataCompareHelper(result, testCase.output, t)
+        })
+    }
 }
 
 func TestMovingAverage(t *testing.T) {
