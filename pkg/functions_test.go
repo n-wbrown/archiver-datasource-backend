@@ -136,7 +136,34 @@ func TestFluctuation(t *testing.T) {
 }
 
 func TestMovingAverage(t *testing.T) {
-    t.Skipf("Not Implemeneted")
+    var tests = []struct{
+        inputSd []SingleData
+        windowSize int
+        output []SingleData
+    }{
+        {
+            inputSd: []SingleData{
+                {
+                    Times: TimeArrayHelper(0,6),
+                    Values: []float64{3,9,6,3,3,6},
+                },
+            },
+            windowSize: 3,
+            output: []SingleData{
+                {
+                    Times: TimeArrayHelper(0,6),
+                    Values: []float64{3,6,6,6,4,4},
+                },
+            },
+        },
+    }
+    for tdx, testCase := range tests {
+        testName := fmt.Sprintf("case: %d", tdx)
+        t.Run(testName, func(t *testing.T) {
+            result := MovingAverage(testCase.inputSd, testCase.windowSize)
+            SingleDataCompareHelper(result, testCase.output, t)
+        })
+    }
 }
 
 

@@ -96,8 +96,6 @@ func FilterIndexer(allData []SingleData, value string) ([]float64, error) {
     return rank, nil
 }
 
-
-
 // Transform functions
 
 func Scale(allData []SingleData, factor float64) []SingleData {
@@ -161,6 +159,34 @@ func Fluctuation(allData []SingleData) []SingleData {
             if idx == 0 { startingValue = val}
             newValues[idx] = val - startingValue
         }
+        newSd := SingleData{
+            Name: oneData.Name,
+            Values: newValues,
+            Times: oneData.Times,
+        }
+        newData[ddx] = newSd
+    }
+    return newData
+}
+
+func MovingAverage(allData []SingleData, windowSize int) []SingleData {
+    newData := make([]SingleData, len(allData))
+    for ddx, oneData := range allData {
+        newValues := make([]float64, len(oneData.Values))
+
+        for idx, _ := range oneData.Values {
+            var total float64
+            total = 0
+            var size float64
+            size = 0
+            for i := 0; i < windowSize; i++ {
+                if (idx-i) < 0 {break}
+                size = size + 1
+                total = total + oneData.Values[idx-i]
+            }
+            newValues[idx] = total/size
+        }
+
         newSd := SingleData{
             Name: oneData.Name,
             Values: newValues,
