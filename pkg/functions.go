@@ -5,6 +5,7 @@ import (
     "math"
     "errors"
     "sort"
+    "time"
 	//"github.com/grafana/grafana-plugin-sdk-go/backend/log"
 )
 
@@ -125,6 +126,26 @@ func Offset(allData []SingleData, delta float64) []SingleData {
         newSd := SingleData{
             Times: oneData.Times,
             Values: newValues,
+        }
+        newData[ddx] = newSd
+    }
+    return newData
+}
+
+func Delta(allData []SingleData) []SingleData {
+    newData := make([]SingleData, len(allData))
+    for ddx, oneData := range allData {
+        newValues := make([]float64, 0, len(oneData.Values))
+        newTimes := make([]time.Time, 0,len(oneData.Times))
+        for idx, _ := range oneData.Values {
+            if idx == 0 {continue}
+            newValues = append(newValues, oneData.Values[idx] - oneData.Values[idx-1])
+            newTimes = append(newTimes, oneData.Times[idx])
+        }
+        newSd := SingleData{
+            Name: oneData.Name,
+            Values: newValues,
+            Times: newTimes,
         }
         newData[ddx] = newSd
     }
