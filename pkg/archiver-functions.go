@@ -167,7 +167,14 @@ func FunctionSelector(responseData []SingleData, fdqm FunctionDescriptorQueryMod
         case "fluctuation":
             newData := Fluctuation(responseData)
             return newData, nil
-        case "Top":
+        case "movingAverage":
+            windowSize, windowSizeErr := fdqm.ExtractParamInt("windowSize")
+            if windowSizeErr != nil {
+                return responseData, windowSizeErr
+            }
+            newData := MovingAverage(responseData, windowSize)
+            return newData, nil
+        case "top":
             number, numberErr := fdqm.ExtractParamInt("number")
             if numberErr != nil {
                 return responseData, numberErr
