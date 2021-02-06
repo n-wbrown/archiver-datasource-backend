@@ -161,6 +161,12 @@ func FunctionSelector(responseData []SingleData, fdqm FunctionDescriptorQueryMod
             }
             newData := Offset(responseData, delta)
             return newData, nil
+        case "delta":
+            newData := Delta(responseData)
+            return newData, nil
+        case "fluctuation":
+            newData := Fluctuation(responseData)
+            return newData, nil
         case "Top":
             number, numberErr := fdqm.ExtractParamInt("number")
             if numberErr != nil {
