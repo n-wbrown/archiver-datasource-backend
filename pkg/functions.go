@@ -281,6 +281,14 @@ func SortByMax(allData []SingleData, order string) ([]SingleData, error) {
     return result, nil
 }
 
+func SortByMin(allData []SingleData, order string) ([]SingleData, error) {
+    result, sortErr := SortCore(allData, "min", order)
+    if sortErr != nil {
+        return allData, sortErr
+    }
+    return result, nil
+}
+
 
 
 
