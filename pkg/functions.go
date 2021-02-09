@@ -6,7 +6,7 @@ import (
     "errors"
     "sort"
     "time"
-	//"github.com/grafana/grafana-plugin-sdk-go/backend/log"
+	"github.com/grafana/grafana-plugin-sdk-go/backend/log"
 )
 
 
@@ -95,6 +95,45 @@ func FilterIndexer(allData []SingleData, value string) ([]float64, error) {
     }
     return rank, nil
 }
+
+func SortCore(allData []SingleData, value string, order string) ([]SingleData, error) {
+    newData := make([]SingleData, 0, len(allData))
+    rank, idxErr  := FilterIndexer(allData, value)
+    if idxErr != nil {
+        return allData, idxErr
+    }
+    if len(rank) != len(allData) {
+        errMsg := fmt.Sprintf("Length of data (%v) and indexes (%v)differ", len(allData), len(rank))
+        return allData, errors.New(errMsg)
+    }
+    ordered := make([]SingleDataOrder, len(allData))
+    for idx, _ := range allData {
+        ordered[idx] = SingleDataOrder{
+            sD: allData[idx],
+            rank: rank[idx],
+        }
+    }
+    if order == "asc" {
+        sort.SliceStable(ordered, func(i, j int) bool{
+            return ordered[i].rank < ordered[j].rank
+        })
+    } else if order == "desc" {
+        sort.SliceStable(ordered, func(i, j int) bool{
+            return ordered[i].rank < ordered[j].rank
+        })
+    } else {
+        errMsg := fmt.Sprintf("Order %v not recognized", order)
+        log.DefaultLogger.Warn(errMsg)
+        return allData, errors.New(errMsg)
+    }
+
+    for idx, _ := range ordered {
+        newData = append(newData, ordered[idx].sD)
+    }
+
+    return newData, nil
+}
+
 
 // Transform functions
 
@@ -231,32 +270,31 @@ func Top(allData []SingleData, number int, value string) ([]SingleData, error) {
 }
 
 func Bottom(allData []SingleData, number int, value string) ([]SingleData, error) {
-    newData := make([]SingleData, 0, len(allData))
-    rank, idxErr  := FilterIndexer(allData, value)
-    if idxErr != nil {
-        return allData, idxErr
+    result, sortErr := SortCore(allData, value, "asc")
+    if sortErr != nil {
+        return allData, sortErr
     }
-    if len(rank) != len(allData) {
-        errMsg := fmt.Sprintf("Length of data (%v) and indexes (%v)differ", len(allData), len(rank))
-        return allData, errors.New(errMsg)
+    if len(result) > number {
+        return result[:number], nil
     }
-    order := make([]SingleDataOrder, len(allData))
-    for idx, _ := range allData {
-        order[idx] = SingleDataOrder{
-            sD: allData[idx],
-            rank: rank[idx],
-        }
-    }
-    sort.SliceStable(order, func(i, j int) bool {
-        return order[i].rank < order[j].rank
-    })
-    for idx, _ := range order {
-        if idx >= number { break }
-        newData = append(newData, order[idx].sD)
-    }
-
-    return newData, nil
+    return result, nil
 }
 
 
-// Sort Functions 
+// Sort Functions
+
+func SortByAvg(allData []SingleData, order string) ([]SingleData, error) {
+    // newData := make([]SingleData, 0, len(allData))
+    // rank, idxErr  := FilterIndexer(allData, value)
+    // if idxErr != nil {
+    //     return allData, idxErr
+    // }
+    return allData, nil
+}
+
+
+
+
+
+
+
