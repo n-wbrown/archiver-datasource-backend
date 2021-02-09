@@ -480,8 +480,6 @@ func TestExclude(t *testing.T) {
 // Sort Functions 
 
 func TestSortByAvg(t *testing.T) {
-    t.Skipf("Not Implemented")
-    /*
     var tests = []struct{
         inputSd []SingleData
         order string
@@ -544,7 +542,6 @@ func TestSortByAvg(t *testing.T) {
             SingleDataCompareHelper(result, testCase.output, t)
         })
     }
-    */
 }
 
 func TestSortByMax(t *testing.T) {

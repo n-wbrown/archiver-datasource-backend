@@ -266,12 +266,11 @@ func Bottom(allData []SingleData, number int, value string) ([]SingleData, error
 // Sort Functions
 
 func SortByAvg(allData []SingleData, order string) ([]SingleData, error) {
-    // newData := make([]SingleData, 0, len(allData))
-    // rank, idxErr  := FilterIndexer(allData, value)
-    // if idxErr != nil {
-    //     return allData, idxErr
-    // }
-    return allData, nil
+    result, sortErr := SortCore(allData, "avg", order)
+    if sortErr != nil {
+        return allData, sortErr
+    }
+    return result, nil
 }
 
 
