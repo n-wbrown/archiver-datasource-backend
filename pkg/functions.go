@@ -298,6 +298,14 @@ func SortBySum(allData []SingleData, order string) ([]SingleData, error) {
 }
 
 func SortByAbsMax(allData []SingleData, order string) ([]SingleData, error) {
+    result, sortErr := SortCore(allData, "absoluteMax", order)
+    if sortErr != nil {
+        return allData, sortErr
+    }
+    return result, nil
+}
+
+func SortByAbsMin(allData []SingleData, order string) ([]SingleData, error) {
     result, sortErr := SortCore(allData, "absoluteMin", order)
     if sortErr != nil {
         return allData, sortErr
