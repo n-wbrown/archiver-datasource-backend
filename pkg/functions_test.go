@@ -558,14 +558,14 @@ func TestSortByMax(t *testing.T) {
                 },
                 {
                     Times: TimeArrayHelper(0,6),
-                    Values: []float64{1,1,2,3,5,8},
+                    Values: []float64{1,1,2,3,5,81},
                 },
             },
-            order: "asc",
+            order: "desc",
             output: []SingleData{
                 {
                     Times: TimeArrayHelper(0,6),
-                    Values: []float64{1,1,2,3,5,8},
+                    Values: []float64{1,1,2,3,5,81},
                 },
                 {
                     Times: TimeArrayHelper(0,6),
@@ -577,14 +577,14 @@ func TestSortByMax(t *testing.T) {
             inputSd: []SingleData{
                 {
                     Times: TimeArrayHelper(0,6),
-                    Values: []float64{1,1,2,3,5,8},
+                    Values: []float64{1,1,2,3,5,81},
                 },
                 {
                     Times: TimeArrayHelper(0,6),
                     Values: []float64{10,10,20,30,50,80},
                 },
             },
-            order: "desc",
+            order: "asc",
             output: []SingleData{
                 {
                     Times: TimeArrayHelper(0,6),
@@ -592,7 +592,7 @@ func TestSortByMax(t *testing.T) {
                 },
                 {
                     Times: TimeArrayHelper(0,6),
-                    Values: []float64{1,1,2,3,5,8},
+                    Values: []float64{1,1,2,3,5,81},
                 },
             },
         },
@@ -623,14 +623,14 @@ func TestSortByMin(t *testing.T) {
                 },
                 {
                     Times: TimeArrayHelper(0,6),
-                    Values: []float64{1,1,2,3,5,8},
+                    Values: []float64{-100,1,2,3,5,8},
                 },
             },
             order: "asc",
             output: []SingleData{
                 {
                     Times: TimeArrayHelper(0,6),
-                    Values: []float64{1,1,2,3,5,8},
+                    Values: []float64{-100,1,2,3,5,8},
                 },
                 {
                     Times: TimeArrayHelper(0,6),
@@ -642,7 +642,7 @@ func TestSortByMin(t *testing.T) {
             inputSd: []SingleData{
                 {
                     Times: TimeArrayHelper(0,6),
-                    Values: []float64{1,1,2,3,5,8},
+                    Values: []float64{-100,1,2,3,5,8},
                 },
                 {
                     Times: TimeArrayHelper(0,6),
@@ -657,7 +657,7 @@ func TestSortByMin(t *testing.T) {
                 },
                 {
                     Times: TimeArrayHelper(0,6),
-                    Values: []float64{1,1,2,3,5,8},
+                    Values: []float64{-100,1,2,3,5,8},
                 },
             },
         },
@@ -688,14 +688,14 @@ func TestSortBySum(t *testing.T) {
                 },
                 {
                     Times: TimeArrayHelper(0,6),
-                    Values: []float64{1,1,2,3,5,8},
+                    Values: []float64{1,1,2,3,5,8000},
                 },
             },
-            order: "asc",
+            order: "desc",
             output: []SingleData{
                 {
                     Times: TimeArrayHelper(0,6),
-                    Values: []float64{1,1,2,3,5,8},
+                    Values: []float64{1,1,2,3,5,8000},
                 },
                 {
                     Times: TimeArrayHelper(0,6),
@@ -707,14 +707,14 @@ func TestSortBySum(t *testing.T) {
             inputSd: []SingleData{
                 {
                     Times: TimeArrayHelper(0,6),
-                    Values: []float64{1,1,2,3,5,8},
+                    Values: []float64{1,1,2,3,5,8000},
                 },
                 {
                     Times: TimeArrayHelper(0,6),
                     Values: []float64{10,10,20,30,50,80},
                 },
             },
-            order: "desc",
+            order: "asc",
             output: []SingleData{
                 {
                     Times: TimeArrayHelper(0,6),
@@ -722,7 +722,7 @@ func TestSortBySum(t *testing.T) {
                 },
                 {
                     Times: TimeArrayHelper(0,6),
-                    Values: []float64{1,1,2,3,5,8},
+                    Values: []float64{1,1,2,3,5,8000},
                 },
             },
         },
@@ -749,7 +749,7 @@ func TestSortByAbsMax(t *testing.T) {
             inputSd: []SingleData{
                 {
                     Times: TimeArrayHelper(0,6),
-                    Values: []float64{10,10,20,30,50,80},
+                    Values: []float64{-10,-10,-20,-30,-50,-80},
                 },
                 {
                     Times: TimeArrayHelper(0,6),
@@ -764,7 +764,7 @@ func TestSortByAbsMax(t *testing.T) {
                 },
                 {
                     Times: TimeArrayHelper(0,6),
-                    Values: []float64{10,10,20,30,50,80},
+                    Values: []float64{-10,-10,-20,-30,-50,-80},
                 },
             },
         },
@@ -776,14 +776,14 @@ func TestSortByAbsMax(t *testing.T) {
                 },
                 {
                     Times: TimeArrayHelper(0,6),
-                    Values: []float64{10,10,20,30,50,80},
+                    Values: []float64{-10,-10,-20,-30,-50,-80},
                 },
             },
             order: "desc",
             output: []SingleData{
                 {
                     Times: TimeArrayHelper(0,6),
-                    Values: []float64{10,10,20,30,50,80},
+                    Values: []float64{-10,-10,-20,-30,-50,-80},
                 },
                 {
                     Times: TimeArrayHelper(0,6),
@@ -814,7 +814,7 @@ func TestSorByAbsMin(t *testing.T) {
             inputSd: []SingleData{
                 {
                     Times: TimeArrayHelper(0,6),
-                    Values: []float64{10,10,20,30,50,80},
+                    Values: []float64{-10,10,20,30,50,80},
                 },
                 {
                     Times: TimeArrayHelper(0,6),
@@ -829,7 +829,7 @@ func TestSorByAbsMin(t *testing.T) {
                 },
                 {
                     Times: TimeArrayHelper(0,6),
-                    Values: []float64{10,10,20,30,50,80},
+                    Values: []float64{-10,10,20,30,50,80},
                 },
             },
         },
@@ -841,14 +841,14 @@ func TestSorByAbsMin(t *testing.T) {
                 },
                 {
                     Times: TimeArrayHelper(0,6),
-                    Values: []float64{10,10,20,30,50,80},
+                    Values: []float64{-10,10,20,30,50,80},
                 },
             },
             order: "desc",
             output: []SingleData{
                 {
                     Times: TimeArrayHelper(0,6),
-                    Values: []float64{10,10,20,30,50,80},
+                    Values: []float64{-10,10,20,30,50,80},
                 },
                 {
                     Times: TimeArrayHelper(0,6),
