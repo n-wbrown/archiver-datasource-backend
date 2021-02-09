@@ -740,7 +740,68 @@ func TestSortBySum(t *testing.T) {
 }
 
 func TestSortByAbsMax(t *testing.T) {
-    t.Skipf("Not Implemeneted")
+    var tests = []struct{
+        inputSd []SingleData
+        order string
+        output []SingleData
+    }{
+        {
+            inputSd: []SingleData{
+                {
+                    Times: TimeArrayHelper(0,6),
+                    Values: []float64{10,10,20,30,50,80},
+                },
+                {
+                    Times: TimeArrayHelper(0,6),
+                    Values: []float64{1,1,2,3,5,8},
+                },
+            },
+            order: "asc",
+            output: []SingleData{
+                {
+                    Times: TimeArrayHelper(0,6),
+                    Values: []float64{1,1,2,3,5,8},
+                },
+                {
+                    Times: TimeArrayHelper(0,6),
+                    Values: []float64{10,10,20,30,50,80},
+                },
+            },
+        },
+        {
+            inputSd: []SingleData{
+                {
+                    Times: TimeArrayHelper(0,6),
+                    Values: []float64{1,1,2,3,5,8},
+                },
+                {
+                    Times: TimeArrayHelper(0,6),
+                    Values: []float64{10,10,20,30,50,80},
+                },
+            },
+            order: "desc",
+            output: []SingleData{
+                {
+                    Times: TimeArrayHelper(0,6),
+                    Values: []float64{10,10,20,30,50,80},
+                },
+                {
+                    Times: TimeArrayHelper(0,6),
+                    Values: []float64{1,1,2,3,5,8},
+                },
+            },
+        },
+    }
+    for tdx, testCase := range tests {
+        testName := fmt.Sprintf("case %d: %v", tdx, testCase.order)
+        t.Run(testName, func(t *testing.T) {
+            result, err := SortByAbsMax(testCase.inputSd, testCase.order)
+            if err != nil {
+                t.Errorf("Error not expected %v", err)
+            }
+            SingleDataCompareHelper(result, testCase.output, t)
+        })
+    }
 }
 
 func TestSorByAbsMin(t *testing.T) {
