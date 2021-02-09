@@ -232,6 +232,16 @@ func FunctionSelector(responseData []SingleData, fdqm FunctionDescriptorQueryMod
                 return responseData, err
             }
             return newData, nil
+        case "sortBySum":
+            order, orderErr := fdqm.ExtractParamString("order")
+            if orderErr != nil {
+                return responseData, orderErr
+            }
+            newData, err := SortBySum(responseData, order)
+            if err != nil {
+                return responseData, err
+            }
+            return newData, nil
         default:
             errMsg := fmt.Sprintf("Function %v is not a recognized function", name)
             log.DefaultLogger.Warn(errMsg)

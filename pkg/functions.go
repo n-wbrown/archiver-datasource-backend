@@ -289,6 +289,14 @@ func SortByMin(allData []SingleData, order string) ([]SingleData, error) {
     return result, nil
 }
 
+func SortBySum(allData []SingleData, order string) ([]SingleData, error) {
+    result, sortErr := SortCore(allData, "sum", order)
+    if sortErr != nil {
+        return allData, sortErr
+    }
+    return result, nil
+}
+
 
 
 
