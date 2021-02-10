@@ -181,7 +181,8 @@ func ArchiverSingleQueryParser(jsonAsBytes []byte) (SingleData, error){
         return sD, jsonErr
     }
 
-    // log.DefaultLogger.Debug("Data as JSON", "value", data)
+    // Obtain PV name 
+    sD.Name = data[0].Meta.Name
 
     // Build output data block
     dataSize := len(data[0].Data)
