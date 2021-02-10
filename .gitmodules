@@ -1,0 +1,3 @@
+[submodule ".archiverappliance-datasource"]
+	path = .archiverappliance-datasource
+	url = https://github.com/n-wbrown/archiverappliance-datasource.git
