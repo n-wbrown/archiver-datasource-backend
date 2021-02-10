@@ -32,6 +32,7 @@
     "rxjs": "6.6.3"
   },
   "dependencies": {
+    "prettier": "^2.2.1",
     "sasaki77-archiver-appliance": "github:sasaki77/archiverappliance-datasource#1.2.0"
   }
 }
