@@ -176,6 +176,7 @@ func TestArchiverSingleQueryParser(t *testing.T) {
     ARCHIVER_FLOAT_PRECISION := 1e-18
     type responseParams struct{
         length int
+        name string
         firstVal float64
         lastVal float64
     }
@@ -184,7 +185,10 @@ func TestArchiverSingleQueryParser(t *testing.T) {
         fileName string
         output responseParams
     }{
-        {fileName: "test_data/good_query_response_01.JSON", output: responseParams{length: 612, firstVal: 0.005249832756817341, lastVal: 0.005262143909931183}},
+        {
+            fileName: "test_data/good_query_response_01.JSON",
+            output: responseParams{length: 612, name: "EM2K0:XGMD:GPI:10:PRESS_RBV", firstVal: 0.005249832756817341, lastVal: 0.005262143909931183,},
+        },
     }
 
     type testData struct {
@@ -215,6 +219,9 @@ func TestArchiverSingleQueryParser(t *testing.T) {
             resultLength := len(result.Times)
             if resultLength != testCase.output.length {
                 t.Fatalf("Lengths differ - Wanted: %v Got: %v", testCase.output.length, resultLength)
+            }
+            if result.Name != testCase.output.name {
+                t.Fatalf("Names differ - Wanted: %v Got: %v", testCase.output.name, result.Name)
             }
             if math.Abs(result.Values[0] - testCase.output.firstVal) > ARCHIVER_FLOAT_PRECISION {
                 t.Fatalf("First values differ - Wanted: %v Got: %v", testCase.output.firstVal, result.Values[0])
