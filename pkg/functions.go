@@ -6,6 +6,7 @@ import (
     "errors"
     "sort"
     "time"
+    "regexp"
 	"github.com/grafana/grafana-plugin-sdk-go/backend/log"
 )
 
@@ -263,7 +264,38 @@ func Bottom(allData []SingleData, number int, value string) ([]SingleData, error
 }
 
 func Exclude(allData []SingleData, pattern string) ([]SingleData, error){
-    return allData, nil
+    var newData []SingleData
+    var err error
+
+    // in preparation for regexp.Compile in case it panics
+    defer func() {
+        if recoveryState := recover(); recoveryState != nil {
+        switch x := recoveryState.(type) {
+            case string:
+                err = errors.New(x)
+            case error:
+                err = x
+            default:
+                err = errors.New("Unknown panic")
+            }
+
+        }
+        newData = allData
+    }()
+
+    finder, compileErr := regexp.Compile(pattern)
+
+    if compileErr != nil {
+        return allData, compileErr
+    }
+
+    for _, data := range allData {
+        if !finder.MatchString(data.Name) {
+            newData = append(newData, data)
+        }
+    }
+
+    return newData, err
 }
 
 

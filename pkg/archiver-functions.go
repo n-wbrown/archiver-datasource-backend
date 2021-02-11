@@ -202,6 +202,16 @@ func FunctionSelector(responseData []SingleData, fdqm FunctionDescriptorQueryMod
                 return responseData, err
             }
             return newData, nil
+        case "exclude":
+            pattern, patternErr := fdqm.ExtractParamString("pattern")
+            if patternErr != nil {
+                return responseData, patternErr
+            }
+            newData, err := Exclude(responseData, pattern)
+            if err != nil {
+                return responseData, err
+            }
+            return newData, nil
         case "sortByAvg":
             order, orderErr := fdqm.ExtractParamString("order")
             if orderErr != nil {

@@ -492,7 +492,7 @@ func TestExclude(t *testing.T) {
             err: false,
             output: []SingleData{
                 {
-                    Name: "Hello there",
+                    Name: "General Kenobi!",
                 },
             },
         },
@@ -509,7 +509,7 @@ func TestExclude(t *testing.T) {
             err: false,
             output: []SingleData{
                 {
-                    Name: "this is a phrase",
+                    Name: "a phrase containing this",
                 },
             },
         },
@@ -526,7 +526,7 @@ func TestExclude(t *testing.T) {
             err: false,
             output: []SingleData{
                 {
-                    Name: "abcdef12ghi",
+                    Name: "nonumbers",
                 },
             },
         },
