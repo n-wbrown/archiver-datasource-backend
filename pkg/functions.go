@@ -262,6 +262,10 @@ func Bottom(allData []SingleData, number int, value string) ([]SingleData, error
     return result, nil
 }
 
+func Exclude(allData []SingleData, pattern string) ([]SingleData, error){
+    return allData, nil
+}
+
 
 // Sort Functions
 

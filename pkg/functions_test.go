@@ -473,7 +473,100 @@ func TestBottom(t *testing.T) {
 }
 
 func TestExclude(t *testing.T) {
-    t.Skipf("Not Implemeneted")
+    var tests = []struct{
+        inputSd []SingleData
+        pattern string
+        err bool
+        output []SingleData
+    }{
+        {
+            inputSd: []SingleData{
+                {
+                    Name: "Hello there",
+                },
+                {
+                    Name: "General Kenobi!",
+                },
+            },
+            pattern: "Hello",
+            err: false,
+            output: []SingleData{
+                {
+                    Name: "Hello there",
+                },
+            },
+        },
+        {
+            inputSd: []SingleData{
+                {
+                    Name: "this is a phrase",
+                },
+                {
+                    Name: "a phrase containing this",
+                },
+            },
+            pattern: "^this",
+            err: false,
+            output: []SingleData{
+                {
+                    Name: "this is a phrase",
+                },
+            },
+        },
+        {
+            inputSd: []SingleData{
+                {
+                    Name: "abcdef12ghi",
+                },
+                {
+                    Name: "nonumbers",
+                },
+            },
+            pattern: "f[1-9]*",
+            err: false,
+            output: []SingleData{
+                {
+                    Name: "abcdef12ghi",
+                },
+            },
+        },
+        {
+            inputSd: []SingleData{
+                {
+                    Name: "abcdef12ghi",
+                },
+                {
+                    Name: "nonumbers",
+                },
+            },
+            pattern: "***Hello",
+            err: true,
+            output: []SingleData{
+                {
+                    Name: "abcdef12ghi",
+                },
+                {
+                    Name: "nonumbers",
+                },
+            },
+        },
+    }
+    for tdx, testCase := range tests {
+        testName := fmt.Sprintf("case %d: %v", tdx, testCase.pattern)
+        t.Run(testName, func(t *testing.T) {
+            result, err := Exclude(testCase.inputSd, testCase.pattern)
+            if testCase.err {
+                if err == nil {
+                    t.Errorf("Error expected but not received %v", err)
+                }
+            } else {
+                if err != nil {
+                    t.Errorf("Error not expected %v", err)
+                }
+            }
+            SingleDataCompareHelper(result, testCase.output, t)
+        })
+    }
 }
 
 
