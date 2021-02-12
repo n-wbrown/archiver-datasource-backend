@@ -50,7 +50,7 @@ jobs:
           body: |
             This release as been been automatically generated.
           draft: false
-          prerelease: false
+          prerelease: true
       - name: Prepare Release
         run: |
           REPO_DIRECTORY=${PWD##*/}
