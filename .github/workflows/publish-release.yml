@@ -53,8 +53,8 @@ jobs:
           prerelease: false
       - name: Prepare Release
         env:
-          REPO_DIRECTORY: ${{ github.workspace }}
         run: |
+          REPO_DIRECTORY=${PWD##*/}
           ls
           pushd ../
           zip -r $REPO_DIRECTORY/archiver-datasource-backend.zip $REPO_DIRECTORY -x @$REPO_DIRECTORY/exclude.txt
