@@ -52,7 +52,6 @@ jobs:
           draft: false
           prerelease: false
       - name: Prepare Release
-        env:
         run: |
           REPO_DIRECTORY=${PWD##*/}
           ls
