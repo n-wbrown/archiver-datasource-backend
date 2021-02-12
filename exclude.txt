@@ -11,9 +11,13 @@
 *node_modules*
 *pkg*
 *src*
+*archiverappliance-datasource*
+*.eslintrc.json
 *.git*
 *.circleci*
 *.github*
 *.gitignore
 *.prettierrc.js
+*.swp
 *exclude.txt
+*exec_tests.sh
