@@ -27,6 +27,7 @@ This plugin was built using the [grafana-sdk-go-plugin](https://github.com/grafa
 | Functions for scalar data | Complete | 
 | Waveform PV support | Incomplete |
 | Functions for waveform data | Incomplete |
+| Check Health | Incomplete |
 
 ### Testing New Features
 
