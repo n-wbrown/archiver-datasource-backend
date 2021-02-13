@@ -71,15 +71,6 @@ func (td *ArchiverDatasource) CheckHealth(ctx context.Context, req *backend.Chec
 }
 
 func (td *ArchiverDatasource) query(ctx context.Context, query backend.DataQuery, pluginctx backend.PluginContext) backend.DataResponse {
-    // log.DefaultLogger.Debug("Executing Query",     "query",               query)
-    // log.DefaultLogger.Debug("query.RefID",         "query.RefID",         query.RefID)
-    // log.DefaultLogger.Debug("query.QueryType",     "query.QueryType",     query.QueryType)
-    // log.DefaultLogger.Debug("query.MaxDataPoints", "query.MaxDataPoints", query.MaxDataPoints)
-    // log.DefaultLogger.Debug("query.Interval",      "query.Interval",      query.Interval)
-    // log.DefaultLogger.Debug("query.TimeRange",     "query.TimeRange",     query.TimeRange)
-    // log.DefaultLogger.Debug("query.JSON",          "query.JSON",          query.JSON)
-    // log.DefaultLogger.Debug("pluginctx",           "pluginctx",           pluginctx)
-
 
     // Unmarshal the json into our queryModel
     var qm ArchiverQueryModel
@@ -90,32 +81,10 @@ func (td *ArchiverDatasource) query(ctx context.Context, query backend.DataQuery
     if response.Error != nil {
         return response
     }
-    log.DefaultLogger.Debug("query.JSON unmarshalled", "qm", qm)
-    log.DefaultLogger.Debug("Functions", "f", qm.Functions)
-    // log.DefaultLogger.Debug("qm.Target", "qm.Target", qm.Target)
-
-
-    // let's extract all the relevant fields here:
-
-    // data from query
-    // log.DefaultLogger.Debug("query.TimeRange.From",    "value",    query.TimeRange.From)
-    // log.DefaultLogger.Debug("query.TimeRange.To",      "value",    query.TimeRange.To)
-    // log.DefaultLogger.Debug("query.QueryType",         "value",    query.QueryType)
-    // log.DefaultLogger.Debug("query.MaxDataPoints",     "value",    query.MaxDataPoints)
-    // log.DefaultLogger.Debug("query.Interval",        "value",    query.Interval)
-    // data from unmarshaled JSON
-    // log.DefaultLogger.Debug("qm.Datasource",        "value",    qm.Datasource)
-    // log.DefaultLogger.Debug("qm.Target",               "value",    qm.Target)
-    // log.DefaultLogger.Debug("qm.Regex",                "value",    qm.Regex)
-    // log.DefaultLogger.Debug("qm.Operator",          "value",    qm.Operator)
-    // log.DefaultLogger.Debug("qm.Functions",          "value",    qm.Functions)
-
-    // data from original request's PluginContext
-    // log.DefaultLogger.Debug("pluginctx.DataSourceInstanceSettings.URL", "value",    pluginctx.DataSourceInstanceSettings.URL)
 
     // make the query and compile the results into a SingleData instance
     responseData := make([]SingleData, 0)
-    targetPvList := make([]string,0) 
+    targetPvList := make([]string,0)
     if qm.Regex {
         // If the user is using a regex to specify the PVs, parse and resolve the regex expression first
 
