@@ -2,11 +2,9 @@ package main
 
 import (
 	"encoding/json"
-	// "math/rand"
 	"net/http"
     "net/url"
 	"time"
-    //"reflect"
     "strings"
     "strconv"
     "io/ioutil"
@@ -72,11 +70,6 @@ func BuildQueryUrl(target string, query backend.DataQuery, pluginctx backend.Plu
     // Build the URL to query the archiver built from Grafana's configuration
     // Set some constants
 
-    // log.DefaultLogger.Debug("target", "target", target)
-    // log.DefaultLogger.Debug("query", "query", query)
-    // log.DefaultLogger.Debug("pluginctx", "pluginctx", pluginctx)
-    // log.DefaultLogger.Debug("qm", "qm", qm)
-
     const TIME_FORMAT = "2006-01-02T15:04:05.000-07:00"
     const JSON_DATA_URL = "data/getData.qw"
 
@@ -121,8 +114,6 @@ func BuildQueryUrl(target string, query backend.DataQuery, pluginctx backend.Plu
     u.RawQuery = query_vals.Encode()
 
     // Display the result
-    // log.DefaultLogger.Debug("u", "value", u)
-    // log.DefaultLogger.Debug("u.String", "value", u.String())
     return u.String()
 }
 
@@ -167,7 +158,6 @@ func ArchiverSingleQuery(queryUrl string) ([]byte, error){
         return jsonAsBytes, ioErr
     }
 
-    // log.DefaultLogger.Debug("Raw data", "value", string(jsonAsBytes))
     return jsonAsBytes, nil
 }
 
@@ -205,7 +195,6 @@ func ArchiverSingleQueryParser(jsonAsBytes []byte) (SingleData, error){
         }
         sD.Values[idx] = valCache
     }
-    // log.DefaultLogger.Debug("SingleData block", "Data", sD)
     return sD, nil
 }
 
