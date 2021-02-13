@@ -1,12 +1,9 @@
 package main
-// This file intended to handle the boilerplate "best-practices" setup recommended by the grafana-plugin-sdk's example file "sample-plugin.go". The implementation of the archive querying logic will be elsewhere.
 
 import (
 	"context"
 	"encoding/json"
-	// "math/rand"
 	"net/http"
-    //"reflect"
 
 	"github.com/grafana/grafana-plugin-sdk-go/backend"
 	"github.com/grafana/grafana-plugin-sdk-go/backend/datasource"
@@ -37,18 +34,11 @@ type ArchiverDatasource struct {
 
 func (td *ArchiverDatasource) QueryData(ctx context.Context, req *backend.QueryDataRequest) (*backend.QueryDataResponse, error) {
     // Structure defined by grafana-plugin-sdk-go. QueryData should unpack the req argument into individual queries.
-    //log.DefaultLogger.Debug("Starting QueryData of newArchiverDataSource")
-    //log.DefaultLogger.Debug("QueryData", "request", req)
-    //log.DefaultLogger.Debug("QueryData.PluginContext", "PluginContext", req.PluginContext)
-    //log.DefaultLogger.Debug("QueryData.PluginContext type", "PluginContext_type", reflect.TypeOf(req.PluginContext))
-    //log.DefaultLogger.Debug("Plugintype.DataSourceInstanceSettings", "settings", req.PluginContext.DataSourceInstanceSettings.URL)
 
     // create response struct
     response := backend.NewQueryDataResponse()
     // IMPLEMENT HERE
     for _, q := range req.Queries {
-        // log.DefaultLogger.Debug("index:", idx)
-        // log.DefaultLogger.Debug("query:", q)
 
         res := td.query(ctx, q, req.PluginContext)
 
