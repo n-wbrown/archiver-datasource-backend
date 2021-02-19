@@ -1,5 +1,9 @@
 # Grafana Data Source Backend Plugin for Epics Archiver
 
+## Archival Notice
+
+This repository is now archived. It was the prototype for developing a backend for [sasaki77/archiverappliance-datasource](https://github.com/sasaki77/archiverappliance-datasource) to enable alerting. Now that the work from this repository has been officially [merged](https://github.com/sasaki77/archiverappliance-datasource/pull/24), this repository is no longer necessary and should not undergo further development. Pull requests, issues, and discussion should now be directed towards the new repository.
+
 ## Introduction
 
 `archiver-datasource-backend` is a [Grafana](https://grafana.com/) plugin to use data from the [Epics Archiver](https://slacmshankar.github.io/epicsarchiver_docs/) in Grafana dashboards and alerts.
